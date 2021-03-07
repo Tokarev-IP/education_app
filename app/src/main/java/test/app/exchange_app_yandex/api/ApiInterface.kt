@@ -4,6 +4,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import io.reactivex.Single
 import io.reactivex.Observable
+import test.app.exchange_app_yandex.data.IndicesConstituentsResponse
 
 interface ApiInterface {
 
@@ -11,7 +12,7 @@ interface ApiInterface {
     fun getIndicesConstituents(
         @Query("symbol") symbol: String,
         @Query("token") token: String
-    ): Single<List<String>>
+    ): Single<IndicesConstituentsResponse>
 
     @GET("quote")
     fun getQuote(

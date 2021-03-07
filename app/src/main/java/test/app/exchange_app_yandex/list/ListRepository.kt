@@ -11,16 +11,20 @@ import test.app.exchange_app_yandex.db.DbConstituents
 class ListRepository(val db: DbConstituents) {
 
     @SuppressLint("CheckResult")
-    fun getGSPC(symbol: String, token: String){
+    fun getGSPCtoROOM(symbol: String, token: String){
         Api.apiClient.getIndicesConstituents(symbol, token)
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .subscribe({
-                db.movieDao().insertConstituents(it)
+//                db.movieDao().insertAll(it)
             },{
                     it -> Log.e("ListRepository ERROR", it.toString())
             })
     }
 
-    
+
+
+
+
+
 }
