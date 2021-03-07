@@ -28,12 +28,9 @@ interface ApiInterface {
         @Query("token") token: String
     ): Single<Int>
 
-    @GET("stock/candle")
-    fun getStockCandle(
+    @GET("stock/profile2")
+    fun getStockProfileTwo(
         @Query("symbol") apiKey: String,
-        @Query("resolution") resolution: String,
-        @Query("from") from: Long,
-        @Query("to") to: Long,
         @Query("token") token: String
     ): Single<Int>
 

@@ -5,11 +5,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "index_constituents")
-data class DataSymbol(
+data class DataConstituents(
 
     @PrimaryKey
-    @ColumnInfo(name = "symbol")
-    val symbol: String,
+    @ColumnInfo(name = "constituents")
+    val constituents: String,
 
     @ColumnInfo(name = "favorite")
     val favorite:Boolean = false
