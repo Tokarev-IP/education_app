@@ -7,10 +7,34 @@ import io.reactivex.Observable
 
 interface ApiInterface {
 
-    @GET("movie/top_rated")
-    fun getTopRatedMovies(
-        @Query("api_key") apiKey: String,
-        @Query("language") language: String
+    @GET("index/constituents")
+    fun getIndicesConstituents(
+        @Query("symbol") symbol: String,
+        @Query("token") token: String
+    ): Single<List<String>>
+
+    @GET("quote")
+    fun getQuote(
+        @Query("symbol") apiKey: String,
+        @Query("token") token: String
+    ): Single<Int>
+
+    @GET("stock/candle")
+    fun getStockCandle(
+        @Query("symbol") apiKey: String,
+        @Query("resolution") resolution: String,
+        @Query("from") from: Long,
+        @Query("to") to: Long,
+        @Query("token") token: String
+    ): Single<Int>
+
+    @GET("stock/candle")
+    fun getStockCandle(
+        @Query("symbol") apiKey: String,
+        @Query("resolution") resolution: String,
+        @Query("from") from: Long,
+        @Query("to") to: Long,
+        @Query("token") token: String
     ): Single<Int>
 
 }
