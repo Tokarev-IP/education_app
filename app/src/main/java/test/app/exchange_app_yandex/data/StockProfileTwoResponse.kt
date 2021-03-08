@@ -1,18 +1,43 @@
 package test.app.exchange_app_yandex.data
 
+import com.google.gson.annotations.SerializedName
+
 data class StockProfileTwoResponse(
 
+    @SerializedName("country")
     val country: String,
+
+    @SerializedName("currency")
     val currency: String,
+
+    @SerializedName("exchange")
     val exchange: String,
+
+    @SerializedName("ipo")
     val ipo: String,
-    val marketCapitalization: Int,
+
+    @SerializedName("marketCapitalization")
+    val market_capitalization: Int,
+
+    @SerializedName("name")
     val name: String,
+
+    @SerializedName("phone")
     val phone: String,
-    val shareOutstanding: Float,
+
+    @SerializedName("shareOutstanding")
+    val share_outstanding: Float,
+
+    @SerializedName("ticker")
     val ticker: String,
-    val weburl: String,
+
+    @SerializedName("weburl")
+    val web_url: String,
+
+    @SerializedName("logo")
     val logo: String,
-    val finnhubIndustry: String
+
+    @SerializedName("finnhubIndustry")
+    val finnhub_industry: String
 ) {
 }
