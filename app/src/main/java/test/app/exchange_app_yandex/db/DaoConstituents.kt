@@ -1,11 +1,9 @@
 package test.app.exchange_app_yandex.db
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import io.reactivex.Single
-import test.app.exchange_app_yandex.data.IndicesConstituentsResponse
 
 @Dao
 interface DaoConstituents {
