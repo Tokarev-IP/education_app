@@ -16,7 +16,7 @@ class ListRepository(val db: DbConstituents) {
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .subscribe({
-//                db.movieDao().insertAll(it)
+
             },{
                     it -> Log.e("ListRepository ERROR", it.toString())
             })

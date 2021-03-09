@@ -11,7 +11,7 @@ data class DataConstituents(
     @ColumnInfo(name = "constituents")
     val constituents: String,
 
-    @ColumnInfo(name = "symbol")
-    val symbol: String
+    @ColumnInfo(name = "favorite")
+    val favorite: Boolean
 ) {
 }

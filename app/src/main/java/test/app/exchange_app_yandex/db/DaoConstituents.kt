@@ -11,12 +11,24 @@ import test.app.exchange_app_yandex.data.IndicesConstituentsResponse
 interface DaoConstituents {
 
     @Query("SELECT * FROM index_constituents" )
-    fun getAll(): Single<DataConstituents>
+    fun getAllConstituents(): Single<DataConstituents>
+
+    @Query("SELECT * FROM quote WHERE constituent = :constituent" )
+    fun getQuote(constituent: String): Single<DataQuote>
+
+    @Query("SELECT * FROM stock_profil WHERE constituent = :constituent" )
+    fun getProfil(constituent: String): Single<DataStockProfileTwo>
 
     @Query("SELECT constituents FROM index_constituents" )
     fun getConstituents(): Single<List<String>>
 
-//    @Insert
-//    fun insertConstituents(constituents: IndicesConstituentsResponse)
+    @Insert
+    fun insertConstituents(constituents: DataConstituents)
+
+    @Insert
+    fun insertQuote(constituents: DataQuote)
+
+    @Insert
+    fun insertStockProfil(constituents: DataStockProfileTwo)
 
 }
