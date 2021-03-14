@@ -4,29 +4,30 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import io.reactivex.Single
+import io.reactivex.Completable
 
 @Dao
 interface DaoConstituents {
 
-    @Query("SELECT * FROM index_constituents" )
-    fun getAllConstituents(): Single<DataConstituents>
+    @Query("SELECT * FROM index_constituents ORDER BY constituents ASC" )
+    fun getAllConstituents(): Single<List<DataConstituents>>
 
     @Query("SELECT * FROM quote WHERE constituent = :constituent" )
     fun getQuote(constituent: String): Single<DataQuote>
 
     @Query("SELECT * FROM stock_profil WHERE constituent = :constituent" )
-    fun getProfil(constituent: String): Single<DataStockProfileTwo>
+    fun getStockProfilTWO(constituent: String): Single<DataStockProfileTwo>
 
     @Query("SELECT constituents FROM index_constituents" )
     fun getConstituents(): Single<List<String>>
 
     @Insert
-    fun insertConstituents(constituents: DataConstituents)
+    fun insertConstituents(constituent: DataConstituents): Completable
 
     @Insert
-    fun insertQuote(constituents: DataQuote)
+    fun insertQuote(constituent: DataQuote): Completable
 
     @Insert
-    fun insertStockProfil(constituents: DataStockProfileTwo)
+    fun insertStockProfilTwo(constituent: DataStockProfileTwo): Completable
 
 }

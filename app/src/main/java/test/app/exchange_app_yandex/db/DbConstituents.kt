@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [DataConstituents::class], version = 1, exportSchema = false)
+@Database(entities = [DataConstituents::class, DataStockProfileTwo::class, DataQuote::class], version = 1, exportSchema = false)
 abstract class DbConstituents : RoomDatabase() {
 
     abstract fun movieDao(): DaoConstituents

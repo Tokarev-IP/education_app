@@ -17,7 +17,7 @@ data class StockProfileTwoResponse(
     val ipo: String,
 
     @SerializedName("marketCapitalization")
-    val market_capitalization: Int,
+    val market_capitalization: Float,
 
     @SerializedName("name")
     val name: String,
