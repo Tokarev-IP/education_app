@@ -1,7 +1,6 @@
 package test.app.exchange_app_yandex.list
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -41,7 +40,7 @@ class ListFragment : Fragment() {
 
         val recyclerView: RecyclerView = minflater.findViewById(R.id.list_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        val adapter = ListAdapter()
+        val adapter = ListAdapter(db)
         recyclerView.adapter = adapter
 
 //        if (savedInstanceState == null) {

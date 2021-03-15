@@ -21,7 +21,7 @@ data class DataStockProfileTwo(
         val name: String,
 
         @ColumnInfo(name = "market_capitalization")
-        val marketCapitalization: Int,
+        val marketCapitalization: Float,
 
         @ColumnInfo(name = "web_url")
         val weburl: String,

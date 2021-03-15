@@ -13,4 +13,5 @@ class ListViewHolder(v: View): RecyclerView.ViewHolder(v) {
     val price: TextView = v.findViewById(R.id.company_price_textView)
     val delta: TextView = v.findViewById(R.id.company_delta_price_textView)
     val logo: ImageView = v.findViewById(R.id.company_logo_image)
+    val fav: ImageView = v.findViewById(R.id.favorite_imageView)
 }

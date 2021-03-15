@@ -13,10 +13,10 @@ interface DaoConstituents {
     fun getAllConstituents(): Single<List<DataConstituents>>
 
     @Query("SELECT * FROM quote WHERE constituent = :constituent" )
-    fun getQuote(constituent: String): Single<DataQuote>
+    fun getQuote(constituent: String): Single<List<DataQuote>>
 
     @Query("SELECT * FROM stock_profil WHERE constituent = :constituent" )
-    fun getStockProfilTWO(constituent: String): Single<DataStockProfileTwo>
+    fun getStockProfilTWO(constituent: String): Single<List<DataStockProfileTwo>>
 
     @Query("SELECT constituents FROM index_constituents" )
     fun getConstituents(): Single<List<String>>

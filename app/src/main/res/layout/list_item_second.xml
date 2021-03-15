@@ -7,7 +7,7 @@
     android:paddingHorizontal="20dp"
     android:paddingVertical="10dp"
     android:id="@+id/list_item_id"
-    android:background="@color/teal_100"
+    android:background="@color/white"
     >
 
     <ImageView
