@@ -45,20 +45,32 @@ class ListRepository(private val db: DaoConstituents,private val dataViewModel: 
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.io())
                                 .subscribe({
+                                    Log.d("Insert", it.constituents.size.toString())
+
                                     for (element in it.constituents)
                                         db.insertConstituents(DataConstituents(element, false))
+                                                .subscribeOn(Schedulers.io())
+                                                .observeOn(Schedulers.io())
+                                                .subscribe({},{})
+
+
+                                    Log.d("Insert", "insert was")
+                                            .also {
 
                                     db.getAllConstituents()
                                             .subscribeOn(Schedulers.io())
                                             .observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe({
-                                                dataViewModel.setConstituents(it)
-                                            },{
-                                                it -> Log.e("ListRepository ERROR", it.toString())
+                                            .subscribe({ data ->
+                                                Log.d("Insert", data.size.toString())
+                                                dataViewModel.setConstituents(data)
+                                            }, { error ->
+                                                Log.e("ListRepository ERROR", error.toString())
                                             })
+                                }
                                 },{
                                     Log.e("ListRepository ERROR", it.toString())
                                 })
+
                     }
                     else {
                         Log.d("LIST", "List.count != 0")
