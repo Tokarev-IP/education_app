@@ -47,9 +47,7 @@ class ListAdapter(private val db: DaoConstituents):
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
 
         Log.e("NUMBER", position.toString())
-
         getItem(position)?.let { itemInfo ->
-
         holder.symbol.text = itemInfo.constituents
 
         if (!itemInfo.favorite) holder.fav.setBackgroundResource(R.drawable.ic_baseline_star_border_40_gray)
@@ -59,7 +57,7 @@ class ListAdapter(private val db: DaoConstituents):
 
             if (!itemInfo.favorite) {
                 holder.prBar.visibility = View.VISIBLE
-                db.updateFav(DataConstituents(itemInfo.constituents, true))
+                db.update(itemInfo.constituents, true)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
@@ -68,7 +66,7 @@ class ListAdapter(private val db: DaoConstituents):
             }
             else{
                 holder.prBar.visibility = View.VISIBLE
-                db.updateFav(DataConstituents(itemInfo.constituents, false))
+                db.update(itemInfo.constituents, false)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
@@ -108,12 +106,13 @@ class ListAdapter(private val db: DaoConstituents):
 
                                     holder.name.text = data.name
 
-                                    if(!data.logo.isNullOrBlank())
-                                            Picasso.get()
-                                                    .load(data.logo)
-                                                    .placeholder(R.drawable.ic_baseline_image_search_50)
-                                                    .error(R.drawable.ic_baseline_image_not_supported_24)
-                                                    .into(holder.logo)
+                                    data.logo?.let { logo->
+                                        Picasso.get()
+                                                .load(logo)
+                                                .placeholder(R.drawable.ic_baseline_image_search_50)
+                                                .error(R.drawable.ic_baseline_image_not_supported_24)
+                                                .into(holder.logo)
+                                    }
                                 },
                                     { error ->
                                         Log.e("ADAPTER ERROR", error.toString())

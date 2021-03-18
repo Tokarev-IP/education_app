@@ -1,5 +1,6 @@
 package test.app.exchange_app_yandex.db
 
+import android.text.BoringLayout
 import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
@@ -28,6 +29,9 @@ interface DaoConstituents {
 
     @Query("DELETE FROM quote")
     fun deleteAllQuote():Completable
+
+    @Query("UPDATE index_constituents SET favorite = :bool WHERE constituents = :constituents")
+    fun update(constituents: String, bool: Boolean): Completable
 
     @Update
     fun updateFav(fav: DataConstituents): Completable
