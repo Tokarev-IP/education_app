@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:paddingHorizontal="20dp"
     android:paddingVertical="10dp"
     android:id="@+id/list_item_id"
     android:background="@color/teal_100"
     >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/first_linear_layout"
+        >
 
     <ImageView
         android:layout_width="40dp"
@@ -41,31 +48,43 @@
                 <TextView
                     android:layout_width="220dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="5dp"
                     android:id="@+id/company_name_textView"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000"
                     />
 
                 <TextView
                     android:layout_width="220dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="5dp"
                     android:id="@+id/company_symbol_textView"
                     />
 
-                <TextView
-                    android:layout_width="220dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal"
+                    >
+
+                <TextView
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginBottom="5dp"
                     android:id="@+id/company_price_textView"
+                    android:textColor="#000000"
                     />
 
                 <TextView
-                    android:layout_width="220dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
                     android:gravity="center"
                     android:id="@+id/company_delta_price_textView"
                     />
-
+                </LinearLayout>
             </LinearLayout>
 
             <ImageView
@@ -74,9 +93,17 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|right"
                 />
-
         </LinearLayout>
-
+    </LinearLayout>
     </LinearLayout>
 
-</LinearLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/teal_100"
+        android:layout_alignBottom="@id/first_linear_layout"
+        android:layout_alignTop="@id/first_linear_layout"
+        />
+
+</RelativeLayout>

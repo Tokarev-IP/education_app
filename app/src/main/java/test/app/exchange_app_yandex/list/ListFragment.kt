@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,20 +42,11 @@ class ListFragment : Fragment() {
         val adapter = ListAdapter(db)
         recyclerView.adapter = adapter
 
-//        if (savedInstanceState == null) {
-//            Log.d("savedInstanceState", "FIRST START")
-//            rep.getGSPCtoROOM("^GSPC", "c114bi748v6t4vgvsoj0")
-//        }
-//
-//        if (savedInstanceState != null) {
-//            Log.d("savedInstanceState", savedInstanceState.getString(KEY))
-//        }
+        rep.getFactoryData(SYMBOL, TOKEN)
 
-        rep.getStart(SYMBOL, TOKEN)
-
-        dataViewModel.getConstituents().observe(this, Observer {
-            adapter.setData(it)
-        })
+        dataViewModel.getData().observe(this) {
+            adapter.submitList(it)
+        }
 
         return minflater
     }

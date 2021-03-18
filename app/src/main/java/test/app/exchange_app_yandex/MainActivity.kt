@@ -12,7 +12,6 @@ class MainActivity : AppCompatActivity() {
                 supportFragmentManager
                     .beginTransaction()
                     .add(R.id.container, ListFragment.newInstance())
-                    .addToBackStack(null)
                     .commit()
 
         //c114bi748v6t4vgvsoj0

@@ -1,28 +1,36 @@
 package test.app.exchange_app_yandex.list
 
 import android.annotation.SuppressLint
+import android.graphics.Color
+import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import com.squareup.picasso.Picasso
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import test.app.exchange_app_yandex.R
 import test.app.exchange_app_yandex.api.Api
-import test.app.exchange_app_yandex.db.DataConstituents
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.android.schedulers.AndroidSchedulers
 import test.app.exchange_app_yandex.db.DaoConstituents
+import test.app.exchange_app_yandex.db.DataConstituents
+import test.app.exchange_app_yandex.db.DataQuote
 import test.app.exchange_app_yandex.db.DataStockProfileTwo
-import java.text.DateFormat
 import kotlin.properties.Delegates
 
-class ListAdapter(private val db: DaoConstituents) : RecyclerView.Adapter<ListViewHolder>() {
+class ListAdapter(private val db: DaoConstituents):
+    PagedListAdapter<DataConstituents, ListViewHolder>(DIFF_CALLBACK) {
 
     private val TYPE_FIRST = 0
     private val TYPE_SECOND = 1
     var layoutId by Delegates.notNull<Int>()
     private val TOKEN = "c114bi748v6t4vgvsoj0"
-    private var listConstituents: List<DataConstituents> = emptyList()
+    lateinit var prdelta: String
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
         if (viewType==TYPE_FIRST)
@@ -34,78 +42,202 @@ class ListAdapter(private val db: DaoConstituents) : RecyclerView.Adapter<ListVi
         return ListViewHolder(view)
     }
 
-    @SuppressLint("CheckResult")
+    @RequiresApi(Build.VERSION_CODES.N)
+    @SuppressLint("CheckResult", "ResourceAsColor", "SetTextI18n", "ShowToast")
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-        holder.symbol.text = listConstituents[position].constituents
 
-        if (!listConstituents[position].favorite) holder.fav.setBackgroundResource(R.drawable.ic_baseline_star_border_40_gray)
+        Log.e("NUMBER", position.toString())
+
+        getItem(position)?.let { itemInfo ->
+
+        holder.symbol.text = itemInfo.constituents
+
+        if (!itemInfo.favorite) holder.fav.setBackgroundResource(R.drawable.ic_baseline_star_border_40_gray)
+        else holder.fav.setBackgroundResource(R.drawable.ic_baseline_star_40_yellow)
 
         holder.fav.setOnClickListener {
-            it.setBackgroundResource(R.drawable.ic_baseline_star_40_yellow)
+
+            if (!itemInfo.favorite) {
+                holder.prBar.visibility = View.VISIBLE
+                db.updateFav(DataConstituents(itemInfo.constituents, true))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            it.setBackgroundResource(R.drawable.ic_baseline_star_40_yellow)
+                        },{})
+            }
+            else{
+                holder.prBar.visibility = View.VISIBLE
+                db.updateFav(DataConstituents(itemInfo.constituents, false))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            it.setBackgroundResource(R.drawable.ic_baseline_star_border_40_gray)
+                        },{})
+            }
         }
 
-        db.getStockProfilTWO(listConstituents[position].constituents)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    if (it.count() == 0) {
-                        Api.apiClient.getStockProfileTwo(listConstituents[position].constituents, TOKEN)
+            db.getStockProfilTWO(itemInfo.constituents)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ it ->
+                        if (it.count() == 0) {
+                            Api.apiClient.getStockProfileTwo(itemInfo.constituents, TOKEN)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ data ->
 
+                                    db.insertStockProfilTwo(
+                                            DataStockProfileTwo(
+                                                    itemInfo.constituents,
+                                                    data.country,
+                                                    data.currency,
+                                                    data.name,
+                                                    data.market_capitalization,
+                                                    if(data.web_url !="") data.web_url else null,
+                                                    if(data.logo !="") data.logo else null,
+                                                    if(data.finnhub_industry !="") data.finnhub_industry else null
+                                        )
+                                    )
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(Schedulers.io())
+                                        .subscribe({
+                                        }, { er ->
+                                            Log.e("ADAPTER ERROR", er.toString())
+                                        })
+
                                     holder.name.text = data.name
 
-                                    Picasso.get()
-                                            .load(data.logo)
-                                            .placeholder(R.drawable.ic_baseline_image_search_50)
-                                            .error(R.drawable.ic_baseline_image_search_50)
-                                            .into(holder.logo)
+                                    if(!data.logo.isNullOrBlank())
+                                            Picasso.get()
+                                                    .load(data.logo)
+                                                    .placeholder(R.drawable.ic_baseline_image_search_50)
+                                                    .error(R.drawable.ic_baseline_image_not_supported_24)
+                                                    .into(holder.logo)
+                                },
+                                    { error ->
+                                        Log.e("ADAPTER ERROR", error.toString())
+                                        holder.prBar.visibility = View.VISIBLE
+                                    })
 
-                                    db.insertStockProfilTwo(DataStockProfileTwo(listConstituents[position].constituents, data.country,
-                                            data.currency, data.name, data.market_capitalization,
-                                            data.web_url, data.logo, data.finnhub_industry))
-                                            .subscribeOn(Schedulers.io())
-                                            .observeOn(Schedulers.io())
-                                            .subscribe({
+                            Api.apiClient.getQuote(itemInfo.constituents, TOKEN)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({ price->
 
-                                            }, { er ->
-                                                Log.e("ADAPTER ERROR", er.toString())
-                                            })
+                                        db.insertQuote(DataQuote(itemInfo.constituents, price.open, price.current,
+                                                price.low, price.high))
+                                                .subscribeOn(Schedulers.io())
+                                                .subscribe({},{})
 
-                                           },
-                                        { error ->
-                                    Log.e("ADAPTER ERROR", error.toString())
-                                           })
-                    }
-                    else {
-                        holder.name.text = it[0].name
+                                        holder.price.text = price.current.toString() + " $"
 
-                        if (it[0].logo!="")
-                        Picasso.get()
-                                .load(it[0].logo)
-                                .placeholder(R.drawable.ic_baseline_image_search_50)
-                                .error(R.drawable.ic_baseline_image_search_50)
-                                .into(holder.logo)
-                        else holder.logo.setBackgroundResource(R.drawable.ic_baseline_image_search_50)
-                    }
+                                        if (price.current / price.open -1 > 0) {
+                                            prdelta = "+"+String.format("%.2f",(price.current / price.open -1)*100)+"%"
+                                            holder.delta.text = prdelta
+                                            holder.delta.setTextColor(Color.GREEN)
+                                        }
+                                        else {
+                                            prdelta = String.format("%.2f",(price.current / price.open -1)*100)+"%"
+                                            holder.delta.text = prdelta
+                                            holder.delta.setTextColor(Color.RED)
+                                        }
 
-                },{
-                    Log.e("ADAPTER ERROR", it.toString())
-                })
+                                        holder.prBar.visibility = View.INVISIBLE
+
+
+                                    },{
+                                        Log.e("ADAPTER ERROR", it.toString())
+                                        holder.prBar.visibility = View.VISIBLE
+                                    })
+                        } else {
+
+                            holder.name.text = it[0].name
+
+                            it[0].logo?.let {
+                                Picasso.get()
+                                        .load(it)
+                                        .placeholder(R.drawable.ic_baseline_image_search_50)
+                                        .error(R.drawable.ic_baseline_image_not_supported_24)
+                                        .into(holder.logo)
+                            }
+
+                            Api.apiClient.getQuote(itemInfo.constituents, TOKEN)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({ apiPrice->
+
+                                        db.updateQuote(DataQuote(itemInfo.constituents, apiPrice.open, apiPrice.current,
+                                                apiPrice.low, apiPrice.high))
+                                                .subscribeOn(Schedulers.io())
+                                                .observeOn(AndroidSchedulers.mainThread())
+                                                .subscribe({
+
+                                                    holder.price.text = apiPrice.current.toString() + " $"
+
+                                                    if (apiPrice.current / apiPrice.open -1 > 0) {
+                                                        holder.delta.text = "+"+String.format("%.2f",(apiPrice.current / apiPrice.open -1)*100)+"%"
+                                                        holder.delta.setTextColor(Color.GREEN)
+                                                    }
+                                                    else {
+                                                        holder.delta.setTextColor(Color.RED)
+                                                        holder.delta.text = String.format("%.2f",(apiPrice.current / apiPrice.open -1)*100)+"%"
+                                                    }
+
+                                                    holder.prBar.visibility = View.INVISIBLE
+                                                },{})
+
+
+                                    },{ error->
+                                        db.getQuote(itemInfo.constituents)
+                                                .subscribeOn(Schedulers.io())
+                                                .observeOn(AndroidSchedulers.mainThread())
+                                                .subscribe({
+
+                                                    if(it.count() != 0) {
+
+                                                        holder.price.text = it[0].current.toString() + " $"
+
+                                                        if (it[0].current / it[0].open - 1 > 0) {
+                                                            holder.delta.text = "+" + String.format("%.2f", (it[0].current / it[0].open - 1) * 100) + "%"
+                                                            holder.delta.setTextColor(Color.GREEN)
+                                                        } else {
+                                                            holder.delta.setTextColor(Color.RED)
+                                                            holder.delta.text = String.format("%.2f", (it[0].current / it[0].open - 1) * 100) + "%"
+                                                        }
+                                                        holder.prBar.visibility = View.INVISIBLE
+                                                    }
+
+                                                },{
+                                                    Log.e("ADAPTER ERROR", it.toString())
+                                                })
+
+                                        Log.e("ADAPTER ERROR", error.toString())
+                                    })
+                        }
+
+                    }, {
+                        Log.e("ADAPTER ERROR", it.toString())
+                    })
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
         return if (position % 2 == 0 ) TYPE_FIRST else TYPE_SECOND
     }
 
-    override fun getItemCount(): Int {
-        return listConstituents.size
-    }
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<DataConstituents>() {
+            override fun areItemsTheSame(
+                old: DataConstituents,
+                new: DataConstituents
+            ): Boolean = old.constituents == new.constituents
 
-    fun setData(data: List<DataConstituents>){
-        listConstituents = data
-        notifyDataSetChanged()
+            override fun areContentsTheSame(
+                old: DataConstituents,
+                new: DataConstituents
+            ): Boolean = old == new
+        }
     }
 
 }

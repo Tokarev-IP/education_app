@@ -23,13 +23,5 @@ data class DataQuote(
         @ColumnInfo(name = "high")
         val high: Float,
 
-        @ColumnInfo(name = "country")
-        val country: String,
-
-        @ColumnInfo(name = "currency")
-        val currency: String,
-
-        @ColumnInfo(name = "name")
-        val name: String,
 ) {
 }
