@@ -20,7 +20,6 @@ class ListFragment : Fragment() {
         }
     }
 
-    private val KEY :String = "START"
     private val SYMBOL :String = "^GSPC"
     private val TOKEN: String = "c114bi748v6t4vgvsoj0"
 
@@ -51,8 +50,4 @@ class ListFragment : Fragment() {
         return minflater
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(KEY, "USE")
-    }
 }

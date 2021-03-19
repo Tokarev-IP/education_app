@@ -33,7 +33,7 @@ class ListAdapter(private val db: DaoConstituents):
     lateinit var prdelta: String
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
-        if (viewType==TYPE_FIRST)
+        if (viewType == TYPE_FIRST)
             layoutId = R.layout.list_item
         else layoutId = R.layout.list_item_second
         val view = LayoutInflater
@@ -107,6 +107,7 @@ class ListAdapter(private val db: DaoConstituents):
                                     holder.name.text = data.name
 
                                     data.logo?.let { logo->
+                                        if (logo != "")
                                         Picasso.get()
                                                 .load(logo)
                                                 .placeholder(R.drawable.ic_baseline_image_search_50)

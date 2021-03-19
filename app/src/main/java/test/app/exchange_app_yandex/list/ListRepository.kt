@@ -8,7 +8,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import test.app.exchange_app_yandex.db.DaoConstituents
 import test.app.exchange_app_yandex.db.DataConstituents
 
-class ListRepository(private val db: DaoConstituents,private val dataViewModel: ListViewModel) {
+class ListRepository(private val db: DaoConstituents, private val dataViewModel: ListViewModel) {
 
     @SuppressLint("CheckResult")
     fun getFactoryData(symbol: String, token: String){
