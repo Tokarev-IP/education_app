@@ -1,6 +1,5 @@
 package test.app.exchange_app_yandex.db
 
-import android.text.BoringLayout
 import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
@@ -18,7 +17,7 @@ interface DaoConstituents {
     @Query("SELECT * FROM index_constituents ORDER BY constituents ASC" )
     fun getFactoryAllConstituents(): DataSource.Factory<Int, DataConstituents>
 
-    @Query("SELECT * FROM index_constituents WHERE favorite = 'true' ORDER BY constituents ASC" )
+    @Query("SELECT * FROM index_constituents WHERE favorite = '1'" )
     fun getFavoriteAllConstituents(): Single<List<DataConstituents>>
 
     @Query("SELECT * FROM quote WHERE constituent = :constituent" )

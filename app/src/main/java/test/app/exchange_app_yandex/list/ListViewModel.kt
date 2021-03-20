@@ -10,16 +10,6 @@ import test.app.exchange_app_yandex.db.DataConstituents
 
 class ListViewModel: ViewModel() {
 
-//    var constituentsVM: MutableLiveData<List<DataConstituents>> = MutableLiveData()
-//
-//
-//    fun getConstituents() = constituentsVM
-//
-//    fun setConstituents(data: List<DataConstituents>){
-//        constituentsVM.value = data
-//    }
-
-
     lateinit var dataFactory: DataSource.Factory<Int, DataConstituents>
 
     private val config = PagedList.Config.Builder()

@@ -9,17 +9,10 @@
     android:orientation="vertical"
     >
 
-    <EditText
-        android:paddingHorizontal="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="Find"
-        />
-
     <androidx.recyclerview.widget.RecyclerView
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:id="@+id/fav_recycler_view"
+        android:id="@+id/news_recycler_view"
         android:scrollbars="vertical"
         >
     </androidx.recyclerview.widget.RecyclerView>

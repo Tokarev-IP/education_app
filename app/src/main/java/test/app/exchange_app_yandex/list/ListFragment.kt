@@ -44,7 +44,9 @@ class ListFragment : Fragment() {
         rep.getFactoryData(SYMBOL, TOKEN)
 
         dataViewModel.getData().observe(this) {
-            adapter.submitList(it)
+            it?.let {
+                adapter.submitList(it)
+            }
         }
 
         return minflater

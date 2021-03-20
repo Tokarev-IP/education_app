@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_one"
+        android:icon="@drawable/ic_baseline_format_list_bulleted_50"
+        android:title="List" />
+
+    <item
+        android:id="@+id/action_two"
+        android:icon="@drawable/ic_baseline_stars_50"
+        android:title="Favorites" />
+
+    <item
+        android:id="@+id/action_three"
+        android:icon="@drawable/ic_baseline_ballot_50"
+        android:title="News" />
+
+</menu>

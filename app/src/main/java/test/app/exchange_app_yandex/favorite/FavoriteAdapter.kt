@@ -15,21 +15,23 @@ import test.app.exchange_app_yandex.api.Api
 import test.app.exchange_app_yandex.db.DaoConstituents
 import test.app.exchange_app_yandex.db.DataConstituents
 import test.app.exchange_app_yandex.db.DataQuote
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
 
-class FavoriteAdapter(private val db: DaoConstituents): RecyclerView.Adapter<FavoriteViewHolder>() {
+class FavoriteAdapter(private val db: DaoConstituents, private val repFav: FavoriteRepository): RecyclerView.Adapter<FavoriteViewHolder>() {
 
-    private var dataList: List<DataConstituents> = emptyList()
+    private var dataList: ArrayList<DataConstituents> = ArrayList()
+
     private val TYPE_FIRST = 0
     private val TYPE_SECOND = 1
     var layoutId by Delegates.notNull<Int>()
     private val TOKEN = "c114bi748v6t4vgvsoj0"
-    lateinit var prdelta: String
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
-        if (viewType == TYPE_FIRST)
-            layoutId = R.layout.list_item
-        else layoutId = R.layout.list_item_second
+        layoutId = if (viewType == TYPE_FIRST)
+            R.layout.list_item
+        else R.layout.list_item_second
         val view = LayoutInflater
                 .from(parent.context)
                 .inflate(layoutId, parent, false)
@@ -39,6 +41,19 @@ class FavoriteAdapter(private val db: DaoConstituents): RecyclerView.Adapter<Fav
     @SuppressLint("CheckResult", "SetTextI18n")
     override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {
         holder.symbol.text = dataList[position].constituents
+
+        holder.fav.setBackgroundResource(R.drawable.ic_baseline_star_40_yellow)
+
+        holder.fav.setOnClickListener {
+            db.update(dataList[position].constituents, false)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        dataList.removeAt(position)
+                        notifyItemRemoved(position)
+                        notifyItemRangeChanged(position, itemCount-position)
+                    },{})
+        }
 
         db.getStockProfilTWO(dataList[position].constituents)
                 .subscribeOn(Schedulers.io())
@@ -118,4 +133,10 @@ class FavoriteAdapter(private val db: DaoConstituents): RecyclerView.Adapter<Fav
     override fun getItemViewType(position: Int): Int {
         return if (position % 2 == 0 ) TYPE_FIRST else TYPE_SECOND
     }
+
+    fun setListData(data: ArrayList<DataConstituents>){
+        dataList = data
+        notifyDataSetChanged()
+    }
+
 }
