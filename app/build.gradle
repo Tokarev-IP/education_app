@@ -80,4 +80,7 @@ dependencies {
     implementation "androidx.paging:paging-runtime-ktx:2.1.2"
     testImplementation "androidx.paging:paging-common-ktx:2.1.2"
 
+    //MPAndroidChart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
 }

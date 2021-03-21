@@ -5,6 +5,7 @@ import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabItem
 import com.google.android.material.tabs.TabLayout
+import test.app.exchange_app_yandex.chart.ChartFragment
 import test.app.exchange_app_yandex.favorite.FavoriteFragment
 import test.app.exchange_app_yandex.list.ListFragment
 import test.app.exchange_app_yandex.news.NewsFragment
@@ -16,7 +17,7 @@ class MainActivity : AppCompatActivity() {
 
                 supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.container, ListFragment.newInstance())
+                    .add(R.id.container, ChartFragment.newInstance())
                     .commit()
 
         val bottomNav: BottomNavigationView = findViewById(R.id.bottom_navigation)
