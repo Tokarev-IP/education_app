@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:hint="Find"
+        android:id="@+id/find_in_fav"
         />
 
     <androidx.recyclerview.widget.RecyclerView

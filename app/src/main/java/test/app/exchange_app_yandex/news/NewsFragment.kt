@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -26,7 +27,6 @@ class NewsFragment : Fragment() {
         }
     }
 
-    //general, forex, crypto, merger
     private val TOKEN: String = "c114bi748v6t4vgvsoj0"
 
     private val newsViewModel by lazy {ViewModelProviders.of(this).get(NewsViewModel::class.java)}
@@ -40,6 +40,9 @@ class NewsFragment : Fragment() {
 
         val newsRep = NewsRepository(newsViewModel)
 
+        val newsPrBar: ProgressBar = minflater.findViewById(R.id.news_progress_bar)
+        newsPrBar.visibility = View.VISIBLE
+
         val recyclerView: RecyclerView = minflater.findViewById(R.id.news_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(context)
         val adapterNews = NewsAdapter()
@@ -50,8 +53,11 @@ class NewsFragment : Fragment() {
         newsViewModel.getData().observe(this, Observer {
             it?.let {
                 adapterNews.setData(it)
+                newsPrBar.visibility = View.INVISIBLE
             }
         })
+
+        retainInstance = true
 
         return minflater
     }

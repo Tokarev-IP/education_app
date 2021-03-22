@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.lifecycle.ViewModelProviders
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.YAxis
@@ -20,13 +22,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class ChartFragment : Fragment() {
-
-    companion object {
-        fun newInstance(): ChartFragment {
-            return ChartFragment()
-        }
-    }
+class ChartFragment(private val symbol: String) : Fragment() {
 
     private val TOKEN: String = "c114bi748v6t4vgvsoj0"
     private val chartViewModel by lazy { ViewModelProviders.of(this).get(ChartViewModel::class.java)}
@@ -39,6 +35,9 @@ class ChartFragment : Fragment() {
 
         val minflater = inflater.inflate(R.layout.fragment_chart, container, false)
 
+        val prbar: ProgressBar = minflater.findViewById(R.id.progress_bar_chart)
+        prbar.visibility = View.VISIBLE
+
         val chartRep = ChartRepository(chartViewModel)
         val currentDate = Date().time/1000
 
@@ -46,16 +45,27 @@ class ChartFragment : Fragment() {
         val yearButton: Button = minflater.findViewById(R.id.year_button)
 
         monthButton.setOnClickListener {
-            chartRep.getStockCandle("AAPL", "D", currentDate-15000000, currentDate, TOKEN)
+            prbar.visibility = View.VISIBLE
+            monthButton.setBackgroundColor(resources.getColor(R.color.teal_200))
+            yearButton.setBackgroundColor(Color.WHITE)
+            yearButton.setTextColor(Color.BLACK)
+            monthButton.setTextColor(Color.WHITE)
+            chartRep.getStockCandle(symbol, "D", currentDate - 15000000, currentDate, TOKEN)
         }
 
         yearButton.setOnClickListener {
-            chartRep.getStockCandle("AAPL", "W", currentDate-90000000, currentDate, TOKEN)
+            prbar.visibility = View.VISIBLE
+            monthButton.setBackgroundColor(Color.WHITE)
+            monthButton.setTextColor(Color.BLACK)
+            yearButton.setBackgroundColor(resources.getColor(R.color.teal_200))
+            yearButton.setTextColor(Color.WHITE)
+            chartRep.getStockCandle(symbol, "W", currentDate - 150000000, currentDate, TOKEN)
         }
 
-        chartRep.getStockCandle("AAPL", "D", currentDate-15000000, currentDate, TOKEN)
-
-
+//        if (chartViewModel.getData().value.get(0).)
+        yearButton.setBackgroundColor(Color.WHITE)
+        yearButton.setTextColor(Color.BLACK)
+        chartRep.getStockCandle(symbol, "D", currentDate - 15000000, currentDate, TOKEN)
 
         chartViewModel.getData().observe(this, androidx.lifecycle.Observer {
             it?.let {
@@ -63,28 +73,15 @@ class ChartFragment : Fragment() {
                 val lineChart: LineChart = minflater.findViewById(R.id.chart)
                 lineChart.setScaleEnabled(false)
                 lineChart.maxHighlightDistance = 1000F
+                lineChart.description.text = "$symbol price chart "
+                lineChart.description.textSize = 15F
+//                lineChart.description.textColor = resources.getColor(R.color.teal_200)
+//                lineChart.description.isEnabled = false
 
-//        val array: ArrayList<Entry> = ArrayList()
-//        array.add(Entry(1416358955F,15F))
-//        array.add(Entry(1516358955F,10F))
-//        array.add(Entry(1616358955F,25F))
-//        array.add(Entry(161616354733F,34F))
-//        array.add(Entry(161616354743F,22F))
-//        array.add(Entry(161616354753F,35F))
-//        array.add(Entry(161616354758F,20F))
-//        array.add(Entry(161616354763F,45F))
-//        array.add(Entry(161616354768F,40F))
-//        array.add(Entry(161616354773F,23F))
-//        array.add(Entry(161616354778F,18F))
-//        array.add(Entry(161616354783F,33F))
-//        array.add(Entry(161616354788F,18F))
-
-                val dataSet: LineDataSet = LineDataSet(it, "AAPL, USD")
+                val dataSet: LineDataSet = LineDataSet(it, "$symbol, USD")
                 dataSet.setDrawCircles(false)
-//                dataSet.setDrawFilled(true)
                 dataSet.color = Color.BLACK
                 dataSet.lineWidth = 2F
-//                dataSet.fillColor = resources.getColor(R.color.teal_300)
 
                 val dataLine: LineData = LineData(dataSet)
                 dataLine.setValueTextColor(Color.RED)
@@ -93,18 +90,20 @@ class ChartFragment : Fragment() {
                 lineChart.data = dataLine
                 lineChart.setNoDataText("WAITING")
 
-                val description = lineChart.description
-                description.isEnabled = false
-
                 val xChart = lineChart.xAxis
                 xChart.textColor = Color.BLACK
                 xChart.gridColor = Color.BLACK
                 xChart.axisLineColor = Color.BLACK
                 xChart.setDrawGridLines(false)
-//        xChart.setDrawLabels(false)
-//        xChart.axisMinimum = 0F
-                xChart.labelCount = 2
-                xChart.valueFormatter = MyValueFormatter()
+
+                if (currentDate.toFloat() - it[0].x > 50000000F) {
+                    xChart.valueFormatter = YearFormatter()
+                    xChart.labelCount = 5
+                }
+                else {
+                    xChart.valueFormatter = MonthFormatter()
+                    xChart.labelCount = 4
+                }
 
                 val yChartLeft = lineChart.getAxis(YAxis.AxisDependency.LEFT)
                 yChartLeft.labelCount = 10
@@ -112,10 +111,6 @@ class ChartFragment : Fragment() {
                 yChartLeft.gridColor = Color.BLACK
                 yChartLeft.axisLineColor = Color.BLACK
                 yChartLeft.setDrawGridLines(false)
-//        yChartLeft.setDrawLabels(false)
-//        val limitLine: LimitLine = LimitLine(27F ,"Current price")
-//        limitLine.lineColor = Color.RED
-//        yChartLeft.addLimitLine(limitLine)
 
                 val yChartRight = lineChart.getAxis(YAxis.AxisDependency.RIGHT)
                 yChartRight.labelCount = 10
@@ -125,10 +120,12 @@ class ChartFragment : Fragment() {
                 yChartRight.setDrawGridLines(false)
 
                 lineChart.invalidate()
+
+                prbar.visibility = View.INVISIBLE
             }
         })
 
-
+        retainInstance = true
 
         return minflater
     }

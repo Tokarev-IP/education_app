@@ -27,7 +27,10 @@ interface DaoConstituents {
     fun getStockProfilTWO(constituent: String): Single<List<DataStockProfileTwo>>
 
     @Query("SELECT * FROM index_constituents WHERE constituents LIKE ''||:data||'%'" )
-    fun getConstituent(data: String): DataSource.Factory<Int, DataConstituents>
+    fun findConstituent(data: String): Single<List<DataConstituents>>
+
+    @Query("SELECT * FROM index_constituents WHERE favorite = 1 AND constituents LIKE ''||:data||'%'" )
+    fun findConstituentFavorite(data: String): Single<List<DataConstituents>>
 
     @Query("DELETE FROM quote")
     fun deleteAllQuote():Completable

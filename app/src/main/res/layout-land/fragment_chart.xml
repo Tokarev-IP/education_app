@@ -6,21 +6,22 @@
     android:layout_height="match_parent"
     tools:context=".chart.ChartFragment"
     android:paddingHorizontal="20dp"
-    android:paddingVertical="30dp"
+    android:paddingVertical="20dp"
     >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         >
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
+        android:layout_gravity="center"
         android:layout_marginBottom="20dp"
-        android:id="@+id/button_liner"
+        android:layout_marginHorizontal="10dp"
         >
 
         <Button
@@ -28,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/month_button"
-            android:layout_marginHorizontal="40dp"
+            android:layout_marginVertical="40dp"
             android:text="@string/months"
             />
 
@@ -37,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/year_button"
-            android:layout_marginHorizontal="40dp"
+            android:layout_marginVertical="40dp"
             android:text="@string/years"
             />
 
@@ -46,19 +47,20 @@
 
     <com.github.mikephil.charting.charts.LineChart
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="match_parent"
         android:id="@+id/chart"
+        android:layout_marginBottom="50dp"
         />
 
     </LinearLayout>
 
-    <ProgressBar
-        android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/progress_bar_chart"
-        android:background="@color/white"
-        >
-    </ProgressBar>
+        <ProgressBar
+            android:layout_width="550dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/progress_bar_chart"
+            android:background="@color/white"
+            >
+        </ProgressBar>
 
 </RelativeLayout>

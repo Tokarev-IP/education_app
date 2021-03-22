@@ -1,6 +1,5 @@
 package test.app.exchange_app_yandex.news
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import test.app.exchange_app_yandex.data.MarketNewsResponse

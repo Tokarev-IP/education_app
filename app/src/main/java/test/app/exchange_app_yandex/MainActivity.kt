@@ -13,11 +13,11 @@ import test.app.exchange_app_yandex.news.NewsFragment
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-                supportFragmentManager
+            setContentView(R.layout.activity_main)
+            supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.container, ChartFragment.newInstance())
+                    .add(R.id.container, ListFragment.newInstance())
                     .commit()
 
         val bottomNav: BottomNavigationView = findViewById(R.id.bottom_navigation)
@@ -25,24 +25,21 @@ class MainActivity : AppCompatActivity() {
             when (it.itemId) {
                 R.id.action_one -> supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.container, ListFragment.newInstance())
-                    .commit()
+                        .replace(R.id.container, ListFragment.newInstance())
+                        .commit()
 
                 R.id.action_two -> supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.container, FavoriteFragment.newInstance())
-                    .commit()
+                        .replace(R.id.container, FavoriteFragment.newInstance())
+                        .commit()
 
                 R.id.action_three -> supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.container, NewsFragment.newInstance())
-                    .commit()
+                        .replace(R.id.container, NewsFragment.newInstance())
+                        .commit()
             }
             true
         }
 
         }
-
-        //c114bi748v6t4vgvsoj0
-        //sandbox_c114bi748v6t4vgvsojg
     }

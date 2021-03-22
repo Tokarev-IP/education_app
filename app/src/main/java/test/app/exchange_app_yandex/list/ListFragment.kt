@@ -38,7 +38,7 @@ class ListFragment : Fragment() {
 
         val recyclerView: RecyclerView = minflater.findViewById(R.id.list_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        val adapter = ListAdapter(db)
+        val adapter = ListAdapter(db, context as AppCompatActivity)
         recyclerView.adapter = adapter
 
         rep.getFactoryData(SYMBOL, TOKEN)
@@ -48,6 +48,8 @@ class ListFragment : Fragment() {
                 adapter.submitList(it)
             }
         }
+
+        retainInstance = true
 
         return minflater
     }

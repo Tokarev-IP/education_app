@@ -16,4 +16,5 @@ class ListViewHolder(v: View): RecyclerView.ViewHolder(v) {
     val logo: ImageView = v.findViewById(R.id.company_logo_image)
     val fav: ImageView = v.findViewById(R.id.favorite_imageView)
     val prBar: ProgressBar = v.findViewById(R.id.progressBar)
+    val item: View = v.findViewById(R.id.list_item_id)
 }

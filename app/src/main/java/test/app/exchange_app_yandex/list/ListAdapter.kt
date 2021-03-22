@@ -17,13 +17,15 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import test.app.exchange_app_yandex.R
 import test.app.exchange_app_yandex.api.Api
+import test.app.exchange_app_yandex.chart.ChartFragment
+import test.app.exchange_app_yandex.chart.ChartRepository
 import test.app.exchange_app_yandex.db.DaoConstituents
 import test.app.exchange_app_yandex.db.DataConstituents
 import test.app.exchange_app_yandex.db.DataQuote
 import test.app.exchange_app_yandex.db.DataStockProfileTwo
 import kotlin.properties.Delegates
 
-class ListAdapter(private val db: DaoConstituents):
+class ListAdapter(private val db: DaoConstituents, private val context: AppCompatActivity):
     PagedListAdapter<DataConstituents, ListViewHolder>(DIFF_CALLBACK) {
 
     private val TYPE_FIRST = 0
@@ -47,7 +49,19 @@ class ListAdapter(private val db: DaoConstituents):
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
 
         Log.e("NUMBER", position.toString())
+
         getItem(position)?.let { itemInfo ->
+
+            val chartView = ChartFragment(itemInfo.constituents)
+
+            holder.item.setOnClickListener {
+                context.supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, chartView)
+                        .addToBackStack(null)
+                        .commit()
+            }
+
         holder.symbol.text = itemInfo.constituents
 
         if (!itemInfo.favorite) holder.fav.setBackgroundResource(R.drawable.ic_baseline_star_border_40_gray)

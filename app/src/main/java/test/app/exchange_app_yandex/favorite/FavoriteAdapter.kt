@@ -6,12 +6,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import test.app.exchange_app_yandex.R
 import test.app.exchange_app_yandex.api.Api
+import test.app.exchange_app_yandex.chart.ChartFragment
 import test.app.exchange_app_yandex.db.DaoConstituents
 import test.app.exchange_app_yandex.db.DataConstituents
 import test.app.exchange_app_yandex.db.DataQuote
@@ -19,7 +21,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
 
-class FavoriteAdapter(private val db: DaoConstituents, private val repFav: FavoriteRepository): RecyclerView.Adapter<FavoriteViewHolder>() {
+class FavoriteAdapter(private val db: DaoConstituents, private val context: AppCompatActivity): RecyclerView.Adapter<FavoriteViewHolder>() {
 
     private var dataList: ArrayList<DataConstituents> = ArrayList()
 
@@ -43,6 +45,16 @@ class FavoriteAdapter(private val db: DaoConstituents, private val repFav: Favor
         holder.symbol.text = dataList[position].constituents
 
         holder.fav.setBackgroundResource(R.drawable.ic_baseline_star_40_yellow)
+
+        val chartView = ChartFragment(dataList[position].constituents)
+
+        holder.item.setOnClickListener {
+            context.supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.container, chartView)
+                    .addToBackStack(null)
+                    .commit()
+        }
 
         holder.fav.setOnClickListener {
             db.update(dataList[position].constituents, false)
