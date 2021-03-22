@@ -4,10 +4,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import io.reactivex.Single
 import io.reactivex.Observable
-import test.app.exchange_app_yandex.data.IndicesConstituentsResponse
-import test.app.exchange_app_yandex.data.MarketNewsResponse
-import test.app.exchange_app_yandex.data.QuoteResponse
-import test.app.exchange_app_yandex.data.StockProfileTwoResponse
+import test.app.exchange_app_yandex.data.*
 
 interface ApiInterface {
 
@@ -30,7 +27,7 @@ interface ApiInterface {
         @Query("from") from: Long,
         @Query("to") to: Long,
         @Query("token") token: String
-    )
+    ): Single<StockCandleResponse>
 
     @GET("stock/profile2")
     fun getStockProfileTwo(

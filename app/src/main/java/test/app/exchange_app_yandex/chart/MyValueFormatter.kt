@@ -13,8 +13,6 @@ class MyValueFormatter: ValueFormatter() {
     override fun getFormattedValue(value: Float): String {
         val dateLong = value.toLong()*1000
         val formatDate = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
-        Log.e("DATE", formatDate.format(Date(dateLong)))
-        Log.e("DATE", value.toLong().toString())
         return formatDate.format(dateLong)
     }
 }
