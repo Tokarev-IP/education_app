@@ -11,6 +11,8 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProviders
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observable
@@ -63,13 +65,24 @@ class ListFragment : Fragment() {
             editText.addTextChangedListener { data -> it.onNext(data.toString())} }
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    Log.e("EDITTEXT ERROR", it.toString())
-                    repList.findListElements(it)
+                    val data = db.findConstituent(it)
+                    val config = PagedList.Config.Builder()
+                            .setPageSize(8)
+                            .setInitialLoadSizeHint(16)
+                            .setPrefetchDistance(8)
+                            .setEnablePlaceholders(false)
+                            .build()
+                    val liveData = LivePagedListBuilder(data, config).build()
+                    liveData.observe(this){ dt->
+                        adapter.submitList(dt)}
+
                 },{
                     Log.e("EDITTEXT ERROR", it.toString())
                 })
+
+        retainInstance = true
 
         return minflater
     }
