@@ -36,4 +36,21 @@ class FavoriteRepository(private val db: DaoConstituents, private val favViewMod
         }
     }
 
+    @SuppressLint("CheckResult")
+    fun findFavElements(editData: String){
+        db.findConstituentFavorite(editData)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    fromListToArray(it)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({ array->
+                                favViewModel.setData(array)
+                            },{})
+                },{
+                    Log.e("FAV REP ERROR", it.toString())
+                })
+    }
+
 }

@@ -15,9 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import test.app.exchange_app_yandex.R
 import test.app.exchange_app_yandex.db.DbConstituents
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.Observable
+import java.util.concurrent.TimeUnit
 
 
 class FavoriteFragment : Fragment() {
@@ -58,18 +59,15 @@ class FavoriteFragment : Fragment() {
 
         val editText: EditText = minflater.findViewById(R.id.find_in_fav)
 
-//        Single.create <String> { it->
-//            editText.addTextChangedListener { data -> it.onSuccess(data.toString())} }
-//                .subscribeOn(AndroidSchedulers.mainThread())
-//                .observeOn(Schedulers.io())
-//                .subscribe({
-//
-//                },{
-//
-//                })
-//
-//        editText.addTextChangedListener { changes->
-//        }
+        Observable.create <String> { it->
+            editText.addTextChangedListener { data -> it.onNext(data.toString())} }
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe({
+                           repFav.findFavElements(it)
+                },{
+                })
 
         retainInstance = true
 

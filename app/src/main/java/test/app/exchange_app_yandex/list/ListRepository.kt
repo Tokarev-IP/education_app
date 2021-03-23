@@ -2,6 +2,7 @@ package test.app.exchange_app_yandex.list
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.EditText
 import test.app.exchange_app_yandex.api.Api
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -41,6 +42,12 @@ class ListRepository(private val db: DaoConstituents, private val dataViewModel:
                 })
 
         val data = db.getFactoryAllConstituents()
+        dataViewModel.setData(data)
+    }
+
+    @SuppressLint("CheckResult")
+    fun findListElements(editText: String){
+        val data = db.findConstituent(editText)
         dataViewModel.setData(data)
     }
 }
