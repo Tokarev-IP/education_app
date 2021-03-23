@@ -53,9 +53,8 @@ class ListFragment : Fragment() {
         repList.getFactoryData(SYMBOL, TOKEN)
 
         dataViewModel.getData().observe(this) {
-            it?.let {
-                adapter.submitList(it)
-            }
+            Log.e("EDITTEXT ERROR", "Адаптер обновлен")
+            adapter.submitList(it)
         }
 
         val editText: EditText = minflater.findViewById(R.id.find_in_list)
@@ -63,15 +62,14 @@ class ListFragment : Fragment() {
         Observable.create <String> { it->
             editText.addTextChangedListener { data -> it.onNext(data.toString())} }
                 .debounce(500, TimeUnit.MILLISECONDS)
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
                 .subscribe({
+                    Log.e("EDITTEXT ERROR", it.toString())
                     repList.findListElements(it)
                 },{
                     Log.e("EDITTEXT ERROR", it.toString())
                 })
-
-        retainInstance = true
 
         return minflater
     }

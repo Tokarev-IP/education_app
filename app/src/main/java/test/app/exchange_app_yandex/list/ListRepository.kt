@@ -23,15 +23,12 @@ class ListRepository(private val db: DaoConstituents, private val dataViewModel:
                                        .subscribeOn(Schedulers.io())
                                        .observeOn(Schedulers.io())
                                        .subscribe({ data->
-                                           Log.d("Insert", data.constituents.size.toString())
 
                                            for (element in data.constituents)
                                                db.insertConstituents(DataConstituents(element, false))
                                                        .subscribeOn(Schedulers.io())
                                                        .observeOn(Schedulers.io())
                                                        .subscribe({},{})
-
-                                           Log.d("Insert", "insert was")
                                        },{ error->
                                            Log.e("ListRepository ERROR", error.toString())
                                        })

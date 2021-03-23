@@ -1,5 +1,6 @@
 package test.app.exchange_app_yandex.list
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,12 +26,7 @@ class ListViewModel: ViewModel() {
     }
 
     fun setData(data: DataSource.Factory<Int, DataConstituents>){
+        Log.e("ListRepository ERROR", "Данные обновлены")
         dataFactory = data
     }
-
-
-
-
-
-
 }
