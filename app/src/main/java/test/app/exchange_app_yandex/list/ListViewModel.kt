@@ -9,7 +9,7 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import test.app.exchange_app_yandex.db.DataConstituents
 
-class ListViewModel: ViewModel() {
+class ListViewModel: ViewModel(){
 
     lateinit var dataFactory: DataSource.Factory<Int, DataConstituents>
 
@@ -29,4 +29,12 @@ class ListViewModel: ViewModel() {
         Log.e("ListRepository ERROR", "Данные обновлены")
         dataFactory = data
     }
+
+    fun invalidateData(data: DataSource.Factory<Int, DataConstituents>){
+        Log.e("ListRepository ERROR", "Данные обновлены")
+        dataFactory.create().invalidate()
+    }
+
+    fun getInvalidateData() = dataFactory.create().invalidate()
+
 }

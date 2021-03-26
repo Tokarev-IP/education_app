@@ -45,6 +45,6 @@ class ListRepository(private val db: DaoConstituents, private val dataViewModel:
     @SuppressLint("CheckResult")
     fun findListElements(editText: String){
         val data = db.findConstituent(editText)
-        dataViewModel.setData(data)
+        dataViewModel.invalidateData(data)
     }
 }
