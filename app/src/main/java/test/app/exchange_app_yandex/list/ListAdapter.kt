@@ -35,9 +35,9 @@ class ListAdapter(private val db: DaoConstituents, private val context: AppCompa
     lateinit var prdelta: String
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
-        if (viewType == TYPE_FIRST)
-            layoutId = R.layout.list_item
-        else layoutId = R.layout.list_item_second
+        layoutId = if (viewType == TYPE_FIRST)
+            R.layout.list_item
+        else R.layout.list_item_second
         val view = LayoutInflater
                 .from(parent.context)
                 .inflate(layoutId, parent, false)
