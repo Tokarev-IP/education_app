@@ -2,7 +2,6 @@ package test.app.exchange_app_yandex.list
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
@@ -20,17 +19,13 @@ class ListViewModel: ViewModel() {
             .setEnablePlaceholders(false)
             .build()
 
+
     fun getData(): LiveData<PagedList<DataConstituents>> {
         return LivePagedListBuilder(dataFactory, config)
                 .build()
     }
 
     fun setData(data: DataSource.Factory<Int, DataConstituents>){
-        Log.e("ListRepository ERROR", "Данные обновлены")
-        dataFactory = data
-    }
-
-    fun setNewData(data: DataSource.Factory<Int, DataConstituents>){
         Log.e("ListRepository ERROR", "Данные обновлены")
         dataFactory = data
     }

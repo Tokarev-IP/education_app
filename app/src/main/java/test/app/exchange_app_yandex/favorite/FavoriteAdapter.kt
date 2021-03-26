@@ -1,7 +1,6 @@
 package test.app.exchange_app_yandex.favorite
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,22 +8,16 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import test.app.exchange_app_yandex.R
-import test.app.exchange_app_yandex.api.Api
 import test.app.exchange_app_yandex.chart.ChartFragment
-import test.app.exchange_app_yandex.db.DaoConstituents
 import test.app.exchange_app_yandex.db.DataConstituents
-import test.app.exchange_app_yandex.db.DataQuote
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
 
-class FavoriteAdapter(private val db: DaoConstituents, private val context: AppCompatActivity): RecyclerView.Adapter<FavoriteViewHolder>() {
+class FavoriteAdapter(private val context: AppCompatActivity, private val repFav: FavoriteRepository):
+        RecyclerView.Adapter<FavoriteViewHolder>() {
 
     private var dataList: ArrayList<DataConstituents> = ArrayList()
-
     private val TYPE_FIRST = 0
     private val TYPE_SECOND = 1
     var layoutId by Delegates.notNull<Int>()
@@ -57,21 +50,14 @@ class FavoriteAdapter(private val db: DaoConstituents, private val context: AppC
         }
 
         holder.fav.setOnClickListener {
-            db.update(dataList[position].constituents, false)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
+            repFav.updateConstituents(dataList[position].constituents, false)
                         dataList.removeAt(position)
                         notifyItemRemoved(position)
                         notifyItemRangeChanged(position, itemCount-position)
-                    },{})
         }
 
-        db.getStockProfilTWO(dataList[position].constituents)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        repFav.getStockProfilTwo(dataList[position].constituents)
                 .subscribe({
-
                     holder.name.text = it[0].name
 
                     it[0].logo?.let { logo->
@@ -81,60 +67,34 @@ class FavoriteAdapter(private val db: DaoConstituents, private val context: AppC
                                 .error(R.drawable.ic_baseline_image_not_supported_24)
                                 .into(holder.logo)
                     }
-
                 },{
                     Log.e("FAVORITE ADAPTER ERROR", it.toString())
                 })
 
-        Api.apiClient.getQuote(dataList[position].constituents, TOKEN)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        repFav.getApiQuote(dataList[position].constituents, TOKEN)
                 .subscribe({ apiPrice->
 
-                    db.updateQuote(DataQuote(dataList[position].constituents, apiPrice.open, apiPrice.current,
-                            apiPrice.low, apiPrice.high))
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe({
-
-                                holder.price.text = apiPrice.current.toString() + " $"
-
-                                if (apiPrice.current / apiPrice.open -1 > 0) {
-                                    holder.delta.text = "+"+String.format("%.2f",(apiPrice.current / apiPrice.open -1)*100)+"%"
-                                    holder.delta.setTextColor(Color.GREEN)
-                                }
-                                else {
-                                    holder.delta.setTextColor(Color.RED)
-                                    holder.delta.text = String.format("%.2f",(apiPrice.current / apiPrice.open -1)*100)+"%"
-                                }
-
-                                holder.prBar.visibility = View.INVISIBLE
-                            },{})
-
+                    repFav.updateQuote(apiPrice, dataList[position].constituents)
+                    holder.price.text = apiPrice.current.toString() + " $"
+                    holder.delta.text = repFav.countDeltaPrice(apiPrice.current, apiPrice.open)
+                    holder.delta.setTextColor(repFav.countDeltaColor(apiPrice.current, apiPrice.open))
+                    holder.prBar.visibility = View.INVISIBLE
 
                 },{ error->
-                    db.getQuote(dataList[position].constituents)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe({
 
+                    repFav.getQuote(dataList[position].constituents)
+                            .subscribe({
                                 if(it.count() != 0) {
 
                                     holder.price.text = it[0].current.toString() + " $"
-
-                                    if (it[0].current / it[0].open - 1 > 0) {
-                                        holder.delta.text = "+" + String.format("%.2f", (it[0].current / it[0].open - 1) * 100) + "%"
-                                        holder.delta.setTextColor(Color.GREEN)
-                                    } else {
-                                        holder.delta.setTextColor(Color.RED)
-                                        holder.delta.text = String.format("%.2f", (it[0].current / it[0].open - 1) * 100) + "%"
-                                    }
+                                    holder.delta.text = repFav.countDeltaPrice(it[0].current, it[0].open)
+                                    holder.delta.setTextColor(repFav.countDeltaColor(it[0].current, it[0].open))
                                     holder.prBar.visibility = View.INVISIBLE
                                 }
-
                             },{
                                 Log.e("ADAPTER ERROR", it.toString())
                             })
+                    Log.e("ADAPTER ERROR", error.toString())
                 })
     }
 
@@ -150,5 +110,4 @@ class FavoriteAdapter(private val db: DaoConstituents, private val context: AppC
         dataList = data
         notifyDataSetChanged()
     }
-
 }

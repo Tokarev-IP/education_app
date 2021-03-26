@@ -1,31 +1,23 @@
 package test.app.exchange_app_yandex.list
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.squareup.picasso.Picasso
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import test.app.exchange_app_yandex.R
-import test.app.exchange_app_yandex.api.Api
 import test.app.exchange_app_yandex.chart.ChartFragment
-import test.app.exchange_app_yandex.chart.ChartRepository
-import test.app.exchange_app_yandex.db.DaoConstituents
 import test.app.exchange_app_yandex.db.DataConstituents
-import test.app.exchange_app_yandex.db.DataQuote
-import test.app.exchange_app_yandex.db.DataStockProfileTwo
 import kotlin.properties.Delegates
 
-class ListAdapter(private val db: DaoConstituents, private val context: AppCompatActivity):
+class ListAdapter(private val context: AppCompatActivity,
+                  private val repList: ListRepository):
     PagedListAdapter<DataConstituents, ListViewHolder>(DIFF_CALLBACK) {
 
     private val TYPE_FIRST = 0
@@ -68,55 +60,32 @@ class ListAdapter(private val db: DaoConstituents, private val context: AppCompa
         else holder.fav.setBackgroundResource(R.drawable.ic_baseline_star_40_yellow)
 
         holder.fav.setOnClickListener {
-
             if (!itemInfo.favorite) {
-                holder.prBar.visibility = View.VISIBLE
-                db.update(itemInfo.constituents, true)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+//                holder.prBar.visibility = View.VISIBLE
+                repList.updateConstituents(itemInfo.constituents, true)
                         .subscribe({
                             it.setBackgroundResource(R.drawable.ic_baseline_star_40_yellow)
-                        },{})
+                        },{
+                            Log.e("ListRepository ERROR", it.toString())
+                        })
             }
             else{
-                holder.prBar.visibility = View.VISIBLE
-                db.update(itemInfo.constituents, false)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+//                holder.prBar.visibility = View.VISIBLE
+                repList.updateConstituents(itemInfo.constituents, true)
                         .subscribe({
                             it.setBackgroundResource(R.drawable.ic_baseline_star_border_40_gray)
-                        },{})
+                        },{
+                            Log.e("ListRepository ERROR", it.toString())
+                        })
             }
         }
-
-            db.getStockProfilTWO(itemInfo.constituents)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+            repList.getDbStockProfil(itemInfo.constituents)
                     .subscribe({ it ->
                         if (it.count() == 0) {
-                            Api.apiClient.getStockProfileTwo(itemInfo.constituents, TOKEN)
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
+                            repList.getApiStockProfil(itemInfo.constituents, TOKEN)
                                 .subscribe({ data ->
 
-                                    db.insertStockProfilTwo(
-                                            DataStockProfileTwo(
-                                                    itemInfo.constituents,
-                                                    data.country,
-                                                    data.currency,
-                                                    data.name,
-                                                    data.market_capitalization,
-                                                    if(data.web_url !="") data.web_url else null,
-                                                    if(data.logo !="") data.logo else null,
-                                                    if(data.finnhub_industry !="") data.finnhub_industry else null
-                                        )
-                                    )
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(Schedulers.io())
-                                        .subscribe({
-                                        }, { er ->
-                                            Log.e("ADAPTER ERROR", er.toString())
-                                        })
+                                    repList.insertStockProfilTwo(itemInfo.constituents, data)
 
                                     holder.name.text = data.name
 
@@ -134,38 +103,23 @@ class ListAdapter(private val db: DaoConstituents, private val context: AppCompa
                                         holder.prBar.visibility = View.VISIBLE
                                     })
 
-                            Api.apiClient.getQuote(itemInfo.constituents, TOKEN)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
+                            repList.getApiQuote(itemInfo.constituents, TOKEN)
                                     .subscribe({ price->
 
-                                        db.insertQuote(DataQuote(itemInfo.constituents, price.open, price.current,
-                                                price.low, price.high))
-                                                .subscribeOn(Schedulers.io())
-                                                .subscribe({},{})
+                                        repList.insertQuote(itemInfo.constituents, price)
 
                                         holder.price.text = price.current.toString() + " $"
-
-                                        if (price.current / price.open -1 > 0) {
-                                            prdelta = "+"+String.format("%.2f",(price.current / price.open -1)*100)+"%"
-                                            holder.delta.text = prdelta
-                                            holder.delta.setTextColor(Color.GREEN)
-                                        }
-                                        else {
-                                            prdelta = String.format("%.2f",(price.current / price.open -1)*100)+"%"
-                                            holder.delta.text = prdelta
-                                            holder.delta.setTextColor(Color.RED)
-                                        }
-
+                                        holder.delta.text = repList.countDeltaPrice(price.current,
+                                                price.open)
+                                        holder.delta.setTextColor(repList.countDeltaColor(price.current,
+                                                price.open))
                                         holder.prBar.visibility = View.INVISIBLE
-
 
                                     },{
                                         Log.e("ADAPTER ERROR", it.toString())
                                         holder.prBar.visibility = View.VISIBLE
                                     })
                         } else {
-
                             holder.name.text = it[0].name
 
                             it[0].logo?.let {
@@ -176,52 +130,27 @@ class ListAdapter(private val db: DaoConstituents, private val context: AppCompa
                                         .into(holder.logo)
                             }
 
-                            Api.apiClient.getQuote(itemInfo.constituents, TOKEN)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
+                            repList.getApiQuote(itemInfo.constituents, TOKEN)
                                     .subscribe({ apiPrice->
 
-                                        db.updateQuote(DataQuote(itemInfo.constituents, apiPrice.open, apiPrice.current,
-                                                apiPrice.low, apiPrice.high))
-                                                .subscribeOn(Schedulers.io())
-                                                .observeOn(AndroidSchedulers.mainThread())
-                                                .subscribe({
-
-                                                    holder.price.text = apiPrice.current.toString() + " $"
-
-                                                    if (apiPrice.current / apiPrice.open -1 > 0) {
-                                                        holder.delta.text = "+"+String.format("%.2f",(apiPrice.current / apiPrice.open -1)*100)+"%"
-                                                        holder.delta.setTextColor(Color.GREEN)
-                                                    }
-                                                    else {
-                                                        holder.delta.setTextColor(Color.RED)
-                                                        holder.delta.text = String.format("%.2f",(apiPrice.current / apiPrice.open -1)*100)+"%"
-                                                    }
-
-                                                    holder.prBar.visibility = View.INVISIBLE
-                                                },{})
-
+                                        repList.updateQuote(itemInfo.constituents, apiPrice)
+                                        holder.price.text = apiPrice.current.toString() + " $"
+                                        holder.delta.text = repList.countDeltaPrice(apiPrice.current, apiPrice.open)
+                                        holder.delta.setTextColor(repList.countDeltaColor(apiPrice.current, apiPrice.open))
+                                        holder.prBar.visibility = View.INVISIBLE
 
                                     },{ error->
-                                        db.getQuote(itemInfo.constituents)
-                                                .subscribeOn(Schedulers.io())
-                                                .observeOn(AndroidSchedulers.mainThread())
-                                                .subscribe({
+                                        repList.getDbQuote(itemInfo.constituents)
+                                                .subscribe({ dbPrice->
 
-                                                    if(it.count() != 0) {
-
-                                                        holder.price.text = it[0].current.toString() + " $"
-
-                                                        if (it[0].current / it[0].open - 1 > 0) {
-                                                            holder.delta.text = "+" + String.format("%.2f", (it[0].current / it[0].open - 1) * 100) + "%"
-                                                            holder.delta.setTextColor(Color.GREEN)
-                                                        } else {
-                                                            holder.delta.setTextColor(Color.RED)
-                                                            holder.delta.text = String.format("%.2f", (it[0].current / it[0].open - 1) * 100) + "%"
-                                                        }
+                                                    if(dbPrice.count() != 0) {
+                                                        holder.price.text = dbPrice[0].current.toString() + " $"
+                                                        holder.delta.text = repList.countDeltaPrice(dbPrice[0].current,
+                                                                dbPrice[0].open)
+                                                        holder.delta.setTextColor(repList.countDeltaColor(dbPrice[0].current,
+                                                                dbPrice[0].open))
                                                         holder.prBar.visibility = View.INVISIBLE
                                                     }
-
                                                 },{
                                                     Log.e("ADAPTER ERROR", it.toString())
                                                 })
@@ -229,7 +158,6 @@ class ListAdapter(private val db: DaoConstituents, private val context: AppCompa
                                         Log.e("ADAPTER ERROR", error.toString())
                                     })
                         }
-
                     }, {
                         Log.e("ADAPTER ERROR", it.toString())
                     })
@@ -253,5 +181,4 @@ class ListAdapter(private val db: DaoConstituents, private val context: AppCompa
             ): Boolean = old == new
         }
     }
-
 }

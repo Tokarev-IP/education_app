@@ -62,7 +62,6 @@ class ChartFragment(private val symbol: String) : Fragment() {
             chartRep.getStockCandle(symbol, "W", currentDate - 150000000, currentDate, TOKEN)
         }
 
-//        if (chartViewModel.getData().value.get(0).)
         yearButton.setBackgroundColor(Color.WHITE)
         yearButton.setTextColor(Color.BLACK)
         chartRep.getStockCandle(symbol, "D", currentDate - 15000000, currentDate, TOKEN)

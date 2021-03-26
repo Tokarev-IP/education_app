@@ -49,7 +49,7 @@ class ListFragment : Fragment() {
 
         val recyclerView: RecyclerView = minflater.findViewById(R.id.list_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        val adapter = ListAdapter(db, context as AppCompatActivity)
+        val adapter = ListAdapter(context as AppCompatActivity, repList)
         recyclerView.adapter = adapter
 
         repList.getFactoryData(SYMBOL, TOKEN)

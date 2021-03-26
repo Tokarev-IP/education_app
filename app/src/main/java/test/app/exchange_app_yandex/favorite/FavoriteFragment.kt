@@ -15,11 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import test.app.exchange_app_yandex.R
 import test.app.exchange_app_yandex.db.DbConstituents
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
-
 
 class FavoriteFragment : Fragment() {
 
@@ -30,7 +28,6 @@ class FavoriteFragment : Fragment() {
     }
 
     private val TOKEN: String = "c114bi748v6t4vgvsoj0"
-
     private val favViewModel by lazy { ViewModelProviders.of(this).get(FavoriteViewModel::class.java)}
 
     @SuppressLint("CheckResult")
@@ -46,7 +43,7 @@ class FavoriteFragment : Fragment() {
 
         val recyclerView: RecyclerView = minflater.findViewById(R.id.fav_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        val adapterFav = FavoriteAdapter(db, context as AppCompatActivity)
+        val adapterFav = FavoriteAdapter(context as AppCompatActivity, repFav)
         recyclerView.adapter = adapterFav
 
         repFav.getFavorite()
@@ -73,5 +70,4 @@ class FavoriteFragment : Fragment() {
 
         return minflater
     }
-
 }
