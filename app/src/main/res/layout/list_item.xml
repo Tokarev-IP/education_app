@@ -52,7 +52,7 @@
                     android:id="@+id/company_name_textView"
                     android:textSize="17sp"
                     android:textStyle="bold"
-                    android:textColor="#000000"
+                    android:textColor="@color/black"
                     />
 
                 <TextView
@@ -74,7 +74,7 @@
                     android:layout_width="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:id="@+id/company_price_textView"
-                    android:textColor="#000000"
+                    android:textColor="@color/black"
                     />
 
                 <TextView

@@ -43,6 +43,8 @@ class ChartFragment(private val symbol: String) : Fragment() {
 
         val monthButton: Button = minflater.findViewById(R.id.month_button)
         val yearButton: Button = minflater.findViewById(R.id.year_button)
+        yearButton.setTextColor(Color.BLACK)
+        monthButton.setTextColor(Color.WHITE)
 
         monthButton.setOnClickListener {
             prbar.visibility = View.VISIBLE

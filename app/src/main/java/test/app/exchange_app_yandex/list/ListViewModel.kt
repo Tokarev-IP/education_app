@@ -26,7 +26,6 @@ class ListViewModel: ViewModel() {
     }
 
     fun setData(data: DataSource.Factory<Int, DataConstituents>){
-        Log.e("ListRepository ERROR", "Данные обновлены")
         dataFactory = data
     }
 

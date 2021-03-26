@@ -55,7 +55,6 @@ class ListFragment : Fragment() {
         repList.getFactoryData(SYMBOL, TOKEN)
 
         dataViewModel.getData().observe(this) {
-            Log.e("EDITTEXT ERROR", "Адаптер обновлен")
             adapter.submitList(it)
         }
 
