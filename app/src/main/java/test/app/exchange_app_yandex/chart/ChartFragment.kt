@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.YAxis
@@ -76,6 +77,8 @@ class ChartFragment(private val symbol: String) : Fragment() {
                 lineChart.maxHighlightDistance = 1000F
                 lineChart.description.text = "$symbol price chart "
                 lineChart.description.textSize = 15F
+                lineChart.setDrawMarkers(true)
+                lineChart.marker = MyMarkerView(context as AppCompatActivity, R.layout.merker_view)
 //                lineChart.description.textColor = resources.getColor(R.color.teal_200)
 //                lineChart.description.isEnabled = false
 
