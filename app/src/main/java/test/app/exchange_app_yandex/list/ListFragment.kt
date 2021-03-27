@@ -67,12 +67,7 @@ class ListFragment : Fragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     val data = db.findConstituent(it)
-                    val config = PagedList.Config.Builder()
-                            .setPageSize(8)
-                            .setInitialLoadSizeHint(16)
-                            .setPrefetchDistance(8)
-                            .setEnablePlaceholders(false)
-                            .build()
+                    val config = dataViewModel.getConfig()
                     val liveData = LivePagedListBuilder(data, config).build()
                     liveData.observe(this){ dt->
                         adapter.submitList(dt)}

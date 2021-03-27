@@ -48,12 +48,16 @@ class FavoriteRepository(private val db: DaoConstituents, private val favViewMod
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    if (it.count() != 0)
                     fromListToArray(it)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe({ array->
                                 favViewModel.setData(array)
-                            },{})
+                            },{ error->
+                                Log.e("FAV REP ERROR", error.toString())
+                            })
+                    else favViewModel.setNoData(false)
                 },{
                     Log.e("FAV REP ERROR", it.toString())
                 })
@@ -65,7 +69,9 @@ class FavoriteRepository(private val db: DaoConstituents, private val favViewMod
                 apiPrice.low, apiPrice.high))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({},{})
+                .subscribe({},{
+                    Log.e("FAV REP ERROR", it.toString())
+                })
     }
 
     @SuppressLint("CheckResult")

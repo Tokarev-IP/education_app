@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,20 +9,31 @@
     android:orientation="vertical"
     >
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_appbar"
+        android:background="@color/white"
+        >
+
     <EditText
         android:paddingHorizontal="20dp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="Find"
+        android:hint="@string/find_by_ticker"
         android:id="@+id/find_in_list"
+        app:layout_scrollFlags="scroll|enterAlways"
         />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:id="@+id/list_recycler_view"
         android:scrollbars="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
     </androidx.recyclerview.widget.RecyclerView>
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

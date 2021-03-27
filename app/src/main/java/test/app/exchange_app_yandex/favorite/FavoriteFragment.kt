@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
@@ -30,7 +31,7 @@ class FavoriteFragment : Fragment() {
     private val TOKEN: String = "c114bi748v6t4vgvsoj0"
     private val favViewModel by lazy { ViewModelProviders.of(this).get(FavoriteViewModel::class.java)}
 
-    @SuppressLint("CheckResult")
+    @SuppressLint("CheckResult", "ShowToast")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,6 +55,12 @@ class FavoriteFragment : Fragment() {
             }
         })
 
+        favViewModel.getNoData().observe(this, Observer {
+            it.let {
+                Toast.makeText(context, "Not found", Toast.LENGTH_SHORT).show()
+            }
+        })
+
         val editText: EditText = minflater.findViewById(R.id.find_in_fav)
 
         Observable.create <String> { it->
@@ -63,8 +70,7 @@ class FavoriteFragment : Fragment() {
                 .observeOn(Schedulers.io())
                 .subscribe({
                            repFav.findFavElements(it)
-                },{
-                })
+                },{})
 
         retainInstance = true
 

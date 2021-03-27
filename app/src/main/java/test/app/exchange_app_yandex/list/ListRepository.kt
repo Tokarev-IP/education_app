@@ -52,6 +52,11 @@ class ListRepository(private val db: DaoConstituents, private val dataViewModel:
                         Log.e("ListRepository ERROR", er.toString())
                     })
 
+    fun updateFav(constituents: DataConstituents) =
+            db.updateFav(constituents)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+
     fun updateConstituents(constituents: String, bool: Boolean) =
             db.update(constituents, bool)
                     .subscribeOn(Schedulers.io())

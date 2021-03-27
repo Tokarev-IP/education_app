@@ -62,7 +62,7 @@ class ListAdapter(private val context: AppCompatActivity,
         holder.fav.setOnClickListener {
             if (!itemInfo.favorite) {
                 holder.prBar.visibility = View.VISIBLE
-                repList.updateConstituents(itemInfo.constituents, true)
+                repList.updateFav(DataConstituents(itemInfo.constituents, true))
                         .subscribe({
                             it.setBackgroundResource(R.drawable.ic_baseline_star_40_yellow)
                         },{
@@ -71,7 +71,7 @@ class ListAdapter(private val context: AppCompatActivity,
             }
             else{
                 holder.prBar.visibility = View.VISIBLE
-                repList.updateConstituents(itemInfo.constituents, false)
+                repList.updateFav(DataConstituents(itemInfo.constituents, false))
                         .subscribe({
                             it.setBackgroundResource(R.drawable.ic_baseline_star_border_40_gray)
                         },{

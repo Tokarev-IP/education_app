@@ -19,6 +19,8 @@ class ListViewModel: ViewModel() {
             .setEnablePlaceholders(false)
             .build()
 
+    fun getConfig() = config
+
 
     fun getData(): LiveData<PagedList<DataConstituents>> {
         return LivePagedListBuilder(dataFactory, config)

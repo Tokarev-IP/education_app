@@ -2,6 +2,7 @@ package test.app.exchange_app_yandex
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabItem
 import com.google.android.material.tabs.TabLayout
@@ -41,5 +42,8 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        }
+        val toolBar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolBar)
+
     }
+}

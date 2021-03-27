@@ -4,4 +4,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="months">MONTHS</string>
     <string name="years">YEARS</string>
+    <string name="find_favorites_by_ticker">Find favorites by ticker</string>
+    <string name="find_by_ticker">Find by ticker</string>
 </resources>

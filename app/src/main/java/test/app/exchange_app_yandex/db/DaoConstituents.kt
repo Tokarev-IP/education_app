@@ -11,10 +11,10 @@ import io.reactivex.Completable
 @Dao
 interface DaoConstituents {
 
-    @Query("SELECT * FROM index_constituents ORDER BY constituents ASC" )
+    @Query("SELECT * FROM index_constituents" )
     fun getAllConstituents(): Single<List<DataConstituents>>
 
-    @Query("SELECT * FROM index_constituents ORDER BY constituents ASC" )
+    @Query("SELECT * FROM index_constituents" )
     fun getFactoryAllConstituents(): DataSource.Factory<Int, DataConstituents>
 
     @Query("SELECT * FROM index_constituents WHERE favorite = '1'" )
@@ -26,7 +26,7 @@ interface DaoConstituents {
     @Query("SELECT * FROM stock_profil WHERE constituent = :constituent" )
     fun getStockProfilTWO(constituent: String): Single<List<DataStockProfileTwo>>
 
-    @Query("SELECT * FROM index_constituents WHERE constituents LIKE ''||:data||'%' ORDER BY constituents ASC" )
+    @Query("SELECT * FROM index_constituents WHERE constituents LIKE ''||:data||'%'" )
     fun findConstituent(data: String): DataSource.Factory<Int, DataConstituents>
 
     @Query("SELECT * FROM index_constituents WHERE favorite = 1 AND constituents LIKE ''||:data||'%'" )

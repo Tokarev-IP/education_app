@@ -18,6 +18,7 @@ class FavoriteAdapter(private val context: AppCompatActivity, private val repFav
         RecyclerView.Adapter<FavoriteViewHolder>() {
 
     private var dataList: ArrayList<DataConstituents> = ArrayList()
+
     private val TYPE_FIRST = 0
     private val TYPE_SECOND = 1
     var layoutId by Delegates.notNull<Int>()
@@ -35,6 +36,8 @@ class FavoriteAdapter(private val context: AppCompatActivity, private val repFav
 
     @SuppressLint("CheckResult", "SetTextI18n")
     override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {
+        holder.prBar.visibility = View.VISIBLE
+
         holder.symbol.text = dataList[position].constituents
 
         holder.fav.setBackgroundResource(R.drawable.ic_baseline_star_40_yellow)
@@ -51,28 +54,30 @@ class FavoriteAdapter(private val context: AppCompatActivity, private val repFav
 
         holder.fav.setOnClickListener {
             repFav.updateConstituents(dataList[position].constituents, false)
-                        dataList.removeAt(position)
-                        notifyItemRemoved(position)
-                        notifyItemRangeChanged(position, itemCount-position)
+            dataList.removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, itemCount - position)
         }
 
         repFav.getStockProfilTwo(dataList[position].constituents)
                 .subscribe({
-                    holder.name.text = it[0].name
+                    if (it.count() != 0) {
+                        holder.name.text = it[0].name
 
-                    it[0].logo?.let { logo->
-                        Picasso.get()
-                                .load(logo)
-                                .placeholder(R.drawable.ic_baseline_image_search_50)
-                                .error(R.drawable.ic_baseline_image_not_supported_24)
-                                .into(holder.logo)
+                        it[0].logo?.let { logo ->
+                            Picasso.get()
+                                    .load(logo)
+                                    .placeholder(R.drawable.ic_baseline_image_search_50)
+                                    .error(R.drawable.ic_baseline_image_not_supported_24)
+                                    .into(holder.logo)
+                        }
                     }
-                },{
+                           }, {
                     Log.e("FAVORITE ADAPTER ERROR", it.toString())
-                })
+                           })
 
         repFav.getApiQuote(dataList[position].constituents, TOKEN)
-                .subscribe({ apiPrice->
+                .subscribe({ apiPrice ->
 
                     repFav.updateQuote(apiPrice, dataList[position].constituents)
                     holder.price.text = apiPrice.current.toString() + " $"
@@ -80,23 +85,25 @@ class FavoriteAdapter(private val context: AppCompatActivity, private val repFav
                     holder.delta.setTextColor(repFav.countDeltaColor(apiPrice.current, apiPrice.open))
                     holder.prBar.visibility = View.INVISIBLE
 
-                },{ error->
+                    }, { error ->
 
                     repFav.getQuote(dataList[position].constituents)
                             .subscribe({
-                                if(it.count() != 0) {
+                                if (it.count() != 0) {
 
                                     holder.price.text = it[0].current.toString() + " $"
                                     holder.delta.text = repFav.countDeltaPrice(it[0].current, it[0].open)
                                     holder.delta.setTextColor(repFav.countDeltaColor(it[0].current, it[0].open))
                                     holder.prBar.visibility = View.INVISIBLE
+
                                 }
-                            },{
+                                       }, {
                                 Log.e("ADAPTER ERROR", it.toString())
-                            })
+                                       })
                     Log.e("ADAPTER ERROR", error.toString())
-                })
+                    })
     }
+
 
     override fun getItemCount(): Int {
         return dataList.size
