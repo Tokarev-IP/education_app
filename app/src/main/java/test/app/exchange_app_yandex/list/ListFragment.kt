@@ -12,8 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProviders
 import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -30,6 +29,7 @@ class ListFragment : Fragment() {
         }
     }
 
+    private var FIND: String = "null"
     private val SYMBOL :String = "^GSPC"
     private val TOKEN: String = "c114bi748v6t4vgvsoj0"
 
@@ -48,14 +48,27 @@ class ListFragment : Fragment() {
         val repList = ListRepository(db, dataViewModel)
 
         val recyclerView: RecyclerView = minflater.findViewById(R.id.list_recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = GridLayoutManager(context, resources.getInteger(R.integer.col_count))
         val adapter = ListAdapter(context as AppCompatActivity, repList)
         recyclerView.adapter = adapter
 
-        repList.getFactoryData(SYMBOL, TOKEN)
-
-        dataViewModel.getData().observe(this) {
-            adapter.submitList(it)
+        if (savedInstanceState != null) {
+            FIND = savedInstanceState.getString("FIND").toString()
+            if (FIND != "" &&  FIND != "null")
+                    {
+                        val data = db.findConstituent(FIND)
+                        val config = dataViewModel.getConfig()
+                        val liveData = LivePagedListBuilder(data, config).build()
+                        liveData.observe(this) { dt ->
+                            adapter.submitList(dt)
+                        }
+            }
+        } else
+        {
+            repList.getFactoryData(SYMBOL, TOKEN)
+            dataViewModel.getData().observe(this) {
+                adapter.submitList(it)
+            }
         }
 
         val editText: EditText = minflater.findViewById(R.id.find_in_list)
@@ -66,6 +79,7 @@ class ListFragment : Fragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    FIND = it
                     val data = db.findConstituent(it)
                     val config = dataViewModel.getConfig()
                     val liveData = LivePagedListBuilder(data, config).build()
@@ -79,6 +93,11 @@ class ListFragment : Fragment() {
         retainInstance = true
 
         return minflater
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (FIND != "null") outState.putString("EDIT", FIND)
     }
 
 }

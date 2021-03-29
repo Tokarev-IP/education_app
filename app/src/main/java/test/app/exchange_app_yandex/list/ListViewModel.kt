@@ -1,6 +1,5 @@
 package test.app.exchange_app_yandex.list
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.DataSource
@@ -30,5 +29,6 @@ class ListViewModel: ViewModel() {
     fun setData(data: DataSource.Factory<Int, DataConstituents>){
         dataFactory = data
     }
+
 
 }

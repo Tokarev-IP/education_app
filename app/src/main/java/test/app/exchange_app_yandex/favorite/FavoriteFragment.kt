@@ -7,12 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import test.app.exchange_app_yandex.R
 import test.app.exchange_app_yandex.db.DbConstituents
@@ -28,7 +27,7 @@ class FavoriteFragment : Fragment() {
         }
     }
 
-    private val TOKEN: String = "c114bi748v6t4vgvsoj0"
+    private var FIND: String = "null"
     private val favViewModel by lazy { ViewModelProviders.of(this).get(FavoriteViewModel::class.java)}
 
     @SuppressLint("CheckResult", "ShowToast")
@@ -40,24 +39,24 @@ class FavoriteFragment : Fragment() {
 
         val db = DbConstituents.getDatabase(context as AppCompatActivity).movieDao()
 
-        val repFav = FavoriteRepository(db, favViewModel)
+        val repFav = FavoriteRepository(db, favViewModel, context as AppCompatActivity)
 
         val recyclerView: RecyclerView = minflater.findViewById(R.id.fav_recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = GridLayoutManager(context, resources.getInteger(R.integer.col_count))
         val adapterFav = FavoriteAdapter(context as AppCompatActivity, repFav)
         recyclerView.adapter = adapterFav
 
-        repFav.getFavorite()
+        if (savedInstanceState != null) {
+            FIND = savedInstanceState.getString("FIND").toString()
+            if (FIND != "" && FIND != "null")
+                    repFav.findFavElements(FIND).toString()
+        }
+        else
+            repFav.getFavorite()
 
         favViewModel.getData().observe(this, Observer {
             it?.let {
             adapterFav.setListData(it)
-            }
-        })
-
-        favViewModel.getNoData().observe(this, Observer {
-            it.let {
-                Toast.makeText(context, "Not found", Toast.LENGTH_SHORT).show()
             }
         })
 
@@ -69,11 +68,17 @@ class FavoriteFragment : Fragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe({
-                           repFav.findFavElements(it)
+                    FIND = it
+                    repFav.findFavElements(it)
                 },{})
 
         retainInstance = true
 
         return minflater
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (FIND != "null") outState.putString("EDIT", FIND )
     }
 }

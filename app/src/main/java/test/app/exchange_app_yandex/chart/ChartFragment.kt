@@ -20,11 +20,13 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import test.app.exchange_app_yandex.R
 import java.text.SimpleDateFormat
+import java.time.Period
 import java.util.*
 import kotlin.collections.ArrayList
 
 class ChartFragment(private val symbol: String) : Fragment() {
 
+    private var PERIOD: String = "Months"
     private val TOKEN: String = "c114bi748v6t4vgvsoj0"
     private val chartViewModel by lazy { ViewModelProviders.of(this).get(ChartViewModel::class.java)}
 
@@ -37,17 +39,40 @@ class ChartFragment(private val symbol: String) : Fragment() {
         val minflater = inflater.inflate(R.layout.fragment_chart, container, false)
 
         val prbar: ProgressBar = minflater.findViewById(R.id.progress_bar_chart)
-        prbar.visibility = View.VISIBLE
 
         val chartRep = ChartRepository(chartViewModel)
         val currentDate = Date().time/1000
 
         val monthButton: Button = minflater.findViewById(R.id.month_button)
         val yearButton: Button = minflater.findViewById(R.id.year_button)
-        yearButton.setTextColor(Color.BLACK)
-        monthButton.setTextColor(Color.WHITE)
 
         monthButton.setOnClickListener {
+            if (PERIOD != "Months") {
+                prbar.visibility = View.VISIBLE
+                monthButton.setBackgroundColor(resources.getColor(R.color.teal_200))
+                yearButton.setBackgroundColor(Color.WHITE)
+                yearButton.setTextColor(Color.BLACK)
+                monthButton.setTextColor(Color.WHITE)
+                chartRep.getStockCandle(symbol, "D", currentDate - 15000000, currentDate, TOKEN)
+                PERIOD = "Months"
+            }
+        }
+
+        yearButton.setOnClickListener {
+            if (PERIOD != "Years") {
+                prbar.visibility = View.VISIBLE
+                monthButton.setBackgroundColor(Color.WHITE)
+                monthButton.setTextColor(Color.BLACK)
+                yearButton.setBackgroundColor(resources.getColor(R.color.teal_200))
+                yearButton.setTextColor(Color.WHITE)
+                chartRep.getStockCandle(symbol, "W", currentDate - 150000000, currentDate, TOKEN)
+                PERIOD = "Years"
+            }
+        }
+
+    if (savedInstanceState != null){
+        PERIOD = savedInstanceState.getString("TIME").toString()
+        if (PERIOD == "Months"){
             prbar.visibility = View.VISIBLE
             monthButton.setBackgroundColor(resources.getColor(R.color.teal_200))
             yearButton.setBackgroundColor(Color.WHITE)
@@ -55,19 +80,24 @@ class ChartFragment(private val symbol: String) : Fragment() {
             monthButton.setTextColor(Color.WHITE)
             chartRep.getStockCandle(symbol, "D", currentDate - 15000000, currentDate, TOKEN)
         }
-
-        yearButton.setOnClickListener {
+        else {
             prbar.visibility = View.VISIBLE
             monthButton.setBackgroundColor(Color.WHITE)
             monthButton.setTextColor(Color.BLACK)
             yearButton.setBackgroundColor(resources.getColor(R.color.teal_200))
             yearButton.setTextColor(Color.WHITE)
             chartRep.getStockCandle(symbol, "W", currentDate - 150000000, currentDate, TOKEN)
+            PERIOD = "Years"
         }
-
+    }
+    else {
+        prbar.visibility = View.VISIBLE
+        monthButton.setBackgroundColor(resources.getColor(R.color.teal_200))
         yearButton.setBackgroundColor(Color.WHITE)
         yearButton.setTextColor(Color.BLACK)
+        monthButton.setTextColor(Color.WHITE)
         chartRep.getStockCandle(symbol, "D", currentDate - 15000000, currentDate, TOKEN)
+    }
 
         chartViewModel.getData().observe(this, androidx.lifecycle.Observer {
             it?.let {
@@ -79,8 +109,6 @@ class ChartFragment(private val symbol: String) : Fragment() {
                 lineChart.description.textSize = 15F
                 lineChart.setDrawMarkers(true)
                 lineChart.marker = MyMarkerView(context as AppCompatActivity, R.layout.merker_view)
-//                lineChart.description.textColor = resources.getColor(R.color.teal_200)
-//                lineChart.description.isEnabled = false
 
                 val dataSet: LineDataSet = LineDataSet(it, "$symbol, USD")
                 dataSet.setDrawCircles(false)
@@ -132,6 +160,11 @@ class ChartFragment(private val symbol: String) : Fragment() {
         retainInstance = true
 
         return minflater
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("TIME", PERIOD )
     }
 
 }

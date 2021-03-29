@@ -3,6 +3,8 @@ package test.app.exchange_app_yandex.favorite
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.util.Log
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import test.app.exchange_app_yandex.db.DaoConstituents
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -12,7 +14,9 @@ import test.app.exchange_app_yandex.data.QuoteResponse
 import test.app.exchange_app_yandex.db.DataConstituents
 import test.app.exchange_app_yandex.db.DataQuote
 
-class FavoriteRepository(private val db: DaoConstituents, private val favViewModel: FavoriteViewModel) {
+class FavoriteRepository(private val db: DaoConstituents,
+                         private val favViewModel: FavoriteViewModel,
+                         private val context: AppCompatActivity) {
 
     @SuppressLint("CheckResult")
     fun getFavorite(){
@@ -57,7 +61,11 @@ class FavoriteRepository(private val db: DaoConstituents, private val favViewMod
                             },{ error->
                                 Log.e("FAV REP ERROR", error.toString())
                             })
-                    else favViewModel.setNoData(false)
+                    else
+                    Toast.makeText(
+                            context ,
+                            "Not find",
+                            Toast.LENGTH_SHORT).show()
                 },{
                     Log.e("FAV REP ERROR", it.toString())
                 })
