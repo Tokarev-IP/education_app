@@ -40,8 +40,6 @@ class ListAdapter(private val context: AppCompatActivity,
     @SuppressLint("CheckResult", "ResourceAsColor", "SetTextI18n", "ShowToast")
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
 
-        Log.e("NUMBER", position.toString())
-
         getItem(position)?.let { itemInfo ->
 
             val chartView = ChartFragment(itemInfo.constituents)
