@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import test.app.exchange_app_yandex.R
 import test.app.exchange_app_yandex.db.DbConstituents
@@ -42,7 +42,7 @@ class FavoriteFragment : Fragment() {
         val repFav = FavoriteRepository(db, favViewModel, context as AppCompatActivity)
 
         val recyclerView: RecyclerView = minflater.findViewById(R.id.fav_recycler_view)
-        recyclerView.layoutManager = GridLayoutManager(context, resources.getInteger(R.integer.col_count))
+        recyclerView.layoutManager = LinearLayoutManager(context)
         val adapterFav = FavoriteAdapter(context as AppCompatActivity, repFav)
         recyclerView.adapter = adapterFav
 

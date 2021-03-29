@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProviders
 import androidx.paging.LivePagedListBuilder
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -48,7 +48,7 @@ class ListFragment : Fragment() {
         val repList = ListRepository(db, dataViewModel)
 
         val recyclerView: RecyclerView = minflater.findViewById(R.id.list_recycler_view)
-        recyclerView.layoutManager = GridLayoutManager(context, resources.getInteger(R.integer.col_count))
+        recyclerView.layoutManager = LinearLayoutManager(context)
         val adapter = ListAdapter(context as AppCompatActivity, repList)
         recyclerView.adapter = adapter
 
