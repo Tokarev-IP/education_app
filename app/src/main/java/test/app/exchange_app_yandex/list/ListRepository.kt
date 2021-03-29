@@ -3,6 +3,7 @@ package test.app.exchange_app_yandex.list
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.util.Log
+import androidx.paging.DataSource
 import test.app.exchange_app_yandex.api.Api
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -57,10 +58,6 @@ class ListRepository(private val db: DaoConstituents, private val dataViewModel:
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
 
-    fun updateConstituents(constituents: String, bool: Boolean) =
-            db.update(constituents, bool)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
 
     @SuppressLint("CheckResult")
     fun insertStockProfilTwo(constituent: String, data: StockProfileTwoResponse) {
@@ -140,4 +137,8 @@ class ListRepository(private val db: DaoConstituents, private val dataViewModel:
             db.getStockProfilTWO(constituent)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
+
+    fun setViewModel(data: DataSource.Factory<Int, DataConstituents> ) {
+        dataViewModel.setData(data)
+    }
 }

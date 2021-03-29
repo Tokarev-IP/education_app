@@ -31,31 +31,31 @@ class MainActivity : AppCompatActivity() {
                     .commit()
             FRAGMENT = "List"
         }
-//        else {
-//            when (FRAGMENT){
-//                "List" -> {
-//                    supportFragmentManager
-//                            .beginTransaction()
-//                            .add(R.id.container, ListFragment.newInstance())
-//                            .commit()
-//                    FRAGMENT = "List"
-//                }
-//                "Favorite" -> {
-//                    supportFragmentManager
-//                            .beginTransaction()
-//                            .add(R.id.container, FavoriteFragment.newInstance())
-//                            .commit()
-//                    FRAGMENT = "Favorite"
-//                }
-//                "News" -> {
-//                    supportFragmentManager
-//                            .beginTransaction()
-//                            .add(R.id.container, NewsFragment.newInstance())
-//                            .commit()
-//                    FRAGMENT = "News"
-//                }
-//            }
-//        }
+        else {
+            when (FRAGMENT){
+                "List" -> {
+                    supportFragmentManager
+                            .beginTransaction()
+                            .add(R.id.container, ListFragment.newInstance())
+                            .commit()
+                    FRAGMENT = "List"
+                }
+                "Favorite" -> {
+                    supportFragmentManager
+                            .beginTransaction()
+                            .add(R.id.container, FavoriteFragment.newInstance())
+                            .commit()
+                    FRAGMENT = "Favorite"
+                }
+                "News" -> {
+                    supportFragmentManager
+                            .beginTransaction()
+                            .add(R.id.container, NewsFragment.newInstance())
+                            .commit()
+                    FRAGMENT = "News"
+                }
+            }
+        }
 
         val bottomNav: BottomNavigationView = findViewById(R.id.bottom_navigation)
         bottomNav.setOnNavigationItemSelectedListener {

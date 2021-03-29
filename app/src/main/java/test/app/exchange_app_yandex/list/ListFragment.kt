@@ -54,21 +54,14 @@ class ListFragment : Fragment() {
 
         if (savedInstanceState != null) {
             FIND = savedInstanceState.getString("FIND").toString()
-            if (FIND != "" &&  FIND != "null")
-                    {
-                        val data = db.findConstituent(FIND)
-                        val config = dataViewModel.getConfig()
-                        val liveData = LivePagedListBuilder(data, config).build()
-                        liveData.observe(this) { dt ->
-                            adapter.submitList(dt)
-                        }
-            }
-        } else
+        }
+        else
         {
             repList.getFactoryData(SYMBOL, TOKEN)
-            dataViewModel.getData().observe(this) {
-                adapter.submitList(it)
-            }
+        }
+
+        dataViewModel.getData().observe(this) {
+            adapter.submitList(it)
         }
 
         val editText: EditText = minflater.findViewById(R.id.find_in_list)
@@ -81,6 +74,7 @@ class ListFragment : Fragment() {
                 .subscribe({
                     FIND = it
                     val data = db.findConstituent(it)
+                    repList.setViewModel(data)
                     val config = dataViewModel.getConfig()
                     val liveData = LivePagedListBuilder(data, config).build()
                     liveData.observe(this){ dt->
