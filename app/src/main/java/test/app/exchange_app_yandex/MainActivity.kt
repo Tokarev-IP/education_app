@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
             FRAGMENT = "List"
         }
         else {
-            
+
             when (FRAGMENT){
                 "List" -> {
                     supportFragmentManager
@@ -57,7 +57,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
         val bottomNav: BottomNavigationView = findViewById(R.id.bottom_navigation)
         bottomNav.setOnNavigationItemSelectedListener {
             when (it.itemId) {
