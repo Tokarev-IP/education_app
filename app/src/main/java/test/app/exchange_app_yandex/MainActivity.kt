@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
             FRAGMENT = "List"
         }
         else {
+            
             when (FRAGMENT){
                 "List" -> {
                     supportFragmentManager
